@@ -20,17 +20,25 @@ package nl.utwente.bigdata;
 
 import java.util.Properties;
 
-import nl.utwente.bigdata.bolts.MovingAvgBolt;
+import nl.utwente.bigdata.bolts.CalculateSentimentBolt;
+import nl.utwente.bigdata.bolts.GetRefereeTweetsBolt;
+import nl.utwente.bigdata.bolts.LinkToGameBolt;
 import nl.utwente.bigdata.bolts.PrinterBolt;
 import nl.utwente.bigdata.bolts.TokenizerBolt;
 import nl.utwente.bigdata.bolts.TweetJsonToTextBolt;
-import nl.utwente.bigdata.spouts.JsonSpout;
-import nl.utwente.bigdata.spouts.RandomNumberBolt;
+import nl.utwente.bigdata.spouts.TweetsJsonSpout;
+import nl.utwente.bigdata.spouts.WorldcupDataJsonSpout;
 import nl.utwente.bigdata.spouts.TwitterSpout;
 import backtype.storm.generated.StormTopology;
 import backtype.storm.topology.TopologyBuilder;
+import backtype.storm.tuple.Fields;
 
-public class Assignment4_3 extends AbstractTopologyRunner {   
+/**	
+ * @author Djuri Baars
+ * @author Martijn Hensema
+ * @package Assignment7 
+ */
+public class RefereeSentiment extends AbstractTopologyRunner {   
 	
 	@Override
 	protected StormTopology buildTopology(Properties properties) {
@@ -38,17 +46,41 @@ public class Assignment4_3 extends AbstractTopologyRunner {
       
 		
 		String boltId = "";
+		String spoutId = "";
 		String prevId;
 		
-		boltId = "spout";
-		builder.setSpout(boltId, new RandomNumberBolt());
+		// We define two streams here, one with tweets
+		// the other with the world cup data
+		spoutId = "tweets"; 
+		builder.setSpout(spoutId, new TweetsJsonSpout()); 
+		
+		spoutId = "worldcupData"; 
+		builder.setSpout(spoutId, new WorldcupDataJsonSpout()); 
+
+		// Tokenize referees
+		builder.setBolt("referees", new TokenizerBolt())
+			.addConfiguration("field", "referee_name")
+			.shuffleGrouping("tweetText"); 
+		
+		// Get tweet texts
+		builder.setBolt("tweetText", new TweetJsonToTextBolt()).shuffleGrouping("tweets"); 				
+		
+		// First step: Extract tweets about referees 
+		boltId = "refereeTweets"; 
+		builder.setBolt(boltId, new GetRefereeTweetsBolt())
+			.shuffleGrouping("referees")
+			.shuffleGrouping("tweets")
+		; 
 		prevId = boltId;
 		
-		// TODO: add topology generation for assignment 4.3 here: Add the 
-		// completed MovingAvgBolt
-		boltId = "movingavg"; 
-		builder.setBolt(boltId, new MovingAvgBolt()).shuffleGrouping(prevId); 
-		prevId = boltId;
+//		// Then: Calculate Sentiment
+//		boltId = "calculateSentiment"; 
+//		builder.setBolt(boltId, new CalculateSentimentBolt()).shuffleGrouping("tweetText"); 
+//		prevId = boltId;
+//		
+//		// Then: Link of games
+//		builder.setBolt(boltId, new LinkToGameBolt()).shuffleGrouping(prevId); 
+
 		
 		boltId = "printer"; 
 		builder.setBolt(boltId, new PrinterBolt()).shuffleGrouping(prevId); 
@@ -61,6 +93,6 @@ public class Assignment4_3 extends AbstractTopologyRunner {
 	
     
     public static void main(String[] args) {
-    	new Assignment4_3().run(args);;
+    	new RefereeSentiment().run(args);;
     }
 }

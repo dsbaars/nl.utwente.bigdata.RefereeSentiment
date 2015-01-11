@@ -17,11 +17,6 @@
  */
 package nl.utwente.bigdata.spouts;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-
 import backtype.storm.spout.SpoutOutputCollector;
 import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.OutputFieldsDeclarer;
@@ -30,7 +25,18 @@ import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Values;
 import backtype.storm.utils.Utils;
 
-public class RandomNumberBolt extends BaseRichSpout {
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Random;
+
+import org.yaml.snakeyaml.reader.StreamReader;
+
+public class TweetsJsonSpout extends BaseRichSpout {
   private static final long serialVersionUID = -1497360044271864620L;
   SpoutOutputCollector _collector;
   Random _rand;
@@ -38,14 +44,30 @@ public class RandomNumberBolt extends BaseRichSpout {
 
   @Override
   public void open(Map conf, TopologyContext context, SpoutOutputCollector collector) {	
+    try {
+    	System.out.println("Reading tweets");
+    	BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("tweets")));
+		String line = null;
+		while ((line = reader.readLine()) != null) {
+			sentences.add(line);
+		}
+		reader.close();
+		System.out.println("Reading done");
+	} catch (IOException e) {
+		// TODO Auto-generated catch block
+		e.printStackTrace();
+	} catch (Exception e) {
+		e.printStackTrace();
+	}
     _collector = collector;
     _rand = new Random();
   }
 
   @Override
   public void nextTuple() {
-    Utils.sleep(100);    
-    _collector.emit(new Values(_rand.nextDouble()*100));
+    Utils.sleep(100);
+    String sentence = sentences.get(_rand.nextInt(sentences.size()));
+    _collector.emit(new Values(sentence));
   }
 
   @Override
@@ -58,7 +80,7 @@ public class RandomNumberBolt extends BaseRichSpout {
 
   @Override
   public void declareOutputFields(OutputFieldsDeclarer declarer) {
-    declarer.declare(new Fields("number"));
+    declarer.declare(new Fields("tweet"));
   }
 
 }

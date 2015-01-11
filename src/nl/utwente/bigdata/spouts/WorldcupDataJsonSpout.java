@@ -36,7 +36,7 @@ import java.util.Random;
 
 import org.yaml.snakeyaml.reader.StreamReader;
 
-public class JsonSpout extends BaseRichSpout {
+public class WorldcupDataJsonSpout extends BaseRichSpout {
   private static final long serialVersionUID = -1497360044271864620L;
   SpoutOutputCollector _collector;
   Random _rand;
@@ -45,8 +45,8 @@ public class JsonSpout extends BaseRichSpout {
   @Override
   public void open(Map conf, TopologyContext context, SpoutOutputCollector collector) {	
     try {
-    	System.out.println("Reading tweets");
-    	BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("tweets")));
+    	System.out.println("Reading worldcup-data");
+    	BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("worldcup-games.json")));
 		String line = null;
 		while ((line = reader.readLine()) != null) {
 			sentences.add(line);
@@ -65,7 +65,7 @@ public class JsonSpout extends BaseRichSpout {
 
   @Override
   public void nextTuple() {
-    Utils.sleep(100);
+    //Utils.sleep(100);
     String sentence = sentences.get(_rand.nextInt(sentences.size()));
     _collector.emit(new Values(sentence));
   }
@@ -80,7 +80,7 @@ public class JsonSpout extends BaseRichSpout {
 
   @Override
   public void declareOutputFields(OutputFieldsDeclarer declarer) {
-    declarer.declare(new Fields("tweet"));
+    declarer.declare(new Fields("match"));
   }
 
 }

@@ -13,17 +13,16 @@ import backtype.storm.topology.base.BaseRichBolt;
 import backtype.storm.tuple.Tuple;
 
 /**
- * Calculates sentiment of tweet
+ * Bolt which links tweets to games
  * @TODO: implement
  * 
  * @author Djuri Baars
  * @author Martijn Hensema
  * @package Assignment7 
  */
-public class CalculateSentimentBolt extends BaseRichBolt {
+public class LinkToGameBolt extends BaseRichBolt {
 
-	private static final long serialVersionUID = -8884479245628635300L;
-	
+	private static final long serialVersionUID = -2627533197173873508L;
 	private SortedMap<String, Integer> sentimentMap = null;
 
 	@Override
@@ -36,7 +35,7 @@ public class CalculateSentimentBolt extends BaseRichBolt {
 	public void prepare(Map map, TopologyContext topologyContext, OutputCollector collector) {
 		this.sentimentMap = Maps.newTreeMap();
 		
-
+		
 	}
 
 	@Override

@@ -23,7 +23,7 @@ import java.util.Properties;
 import nl.utwente.bigdata.bolts.PrinterBolt;
 import nl.utwente.bigdata.bolts.TokenizerBolt;
 import nl.utwente.bigdata.bolts.TweetJsonToTextBolt;
-import nl.utwente.bigdata.spouts.JsonSpout;
+import nl.utwente.bigdata.spouts.WorldcupDataJsonSpout;
 import nl.utwente.bigdata.spouts.TwitterSpout;
 import backtype.storm.generated.StormTopology;
 import backtype.storm.topology.TopologyBuilder;

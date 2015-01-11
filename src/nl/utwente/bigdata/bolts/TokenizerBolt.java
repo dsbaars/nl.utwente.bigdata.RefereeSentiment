@@ -17,7 +17,9 @@
  */
 package nl.utwente.bigdata.bolts;
 
+import java.text.Normalizer;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.BasicOutputCollector;
@@ -40,8 +42,13 @@ public class TokenizerBolt extends BaseBasicBolt {
   @Override
   public void execute(Tuple tuple, BasicOutputCollector collector) {
 	String val = tuple.getStringByField(this.field);
+	// from: http://stackoverflow.com/questions/1008802/converting-symbols-accent-letters-to-english-alphabet
+    Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
+    String nfdNormalizedString = "";	
+    
     for (String token: val.split("\\s+")) {
-    	collector.emit(new Values(token.toLowerCase()));
+    	nfdNormalizedString = Normalizer.normalize(token, Normalizer.Form.NFD); 
+    	collector.emit(new Values((String)pattern.matcher(nfdNormalizedString.toLowerCase()).replaceAll("")));
     }
   }
 
