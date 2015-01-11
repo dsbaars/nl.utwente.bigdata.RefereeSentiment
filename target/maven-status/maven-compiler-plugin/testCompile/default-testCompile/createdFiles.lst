@@ -1,0 +1,6 @@
+test/java/nl/utwente/bigdata/Collector.class
+test/java/nl/utwente/bigdata/TopCounterBoltTest$2.class
+test/java/nl/utwente/bigdata/MovingAvgTest.class
+test/java/nl/utwente/bigdata/TopCounterBoltTest$1.class
+test/java/nl/utwente/bigdata/MovingAvgTest$1.class
+test/java/nl/utwente/bigdata/TopCounterBoltTest.class
