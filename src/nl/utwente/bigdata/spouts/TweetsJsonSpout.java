@@ -41,7 +41,8 @@ public class TweetsJsonSpout extends BaseRichSpout {
   SpoutOutputCollector _collector;
   Random _rand;
   List<String> sentences = new ArrayList<String>(); 
-
+  boolean emitted = false;
+  
   @Override
   public void open(Map conf, TopologyContext context, SpoutOutputCollector collector) {	
     try {
@@ -55,7 +56,6 @@ public class TweetsJsonSpout extends BaseRichSpout {
 		reader.close();
 		System.out.println("Reading done");
 	} catch (IOException e) {
-		// TODO Auto-generated catch block
 		e.printStackTrace();
 	} catch (Exception e) {
 		e.printStackTrace();
@@ -66,9 +66,14 @@ public class TweetsJsonSpout extends BaseRichSpout {
 
   @Override
   public void nextTuple() {
-   // Utils.sleep(100);
-    String sentence = sentences.get(_rand.nextInt(sentences.size()));
-    _collector.emit(new Values(sentence));
+    Utils.sleep(100);
+    if (!emitted &&  sentences.size() > 0) {
+	    for (int i = 0; i < sentences.size(); i++) {
+	        _collector.emit(new Values(sentences.get(i)));
+	    }
+	    emitted = true;
+    }
+    
   }
 
   @Override
