@@ -55,9 +55,9 @@ public class WorldCupJsonToDataBolt extends BaseBasicBolt {
   @Override
   public void execute(Tuple tuple, BasicOutputCollector collector) {
 	  try {
-        Map<String, Object> game = (Map<String, Object>) parser.parse(tuple.getString(0));
+		  JSONObject game = (JSONObject) parser.parse(tuple.getString(0));
         
-        JSONArray officials = (JSONArray) game.get("officials");
+		  JSONArray officials = (JSONArray) game.get("officials");
         JSONObject home = (JSONObject) game.get("home");
         JSONObject away = (JSONObject) game.get("away");
         
@@ -76,6 +76,7 @@ public class WorldCupJsonToDataBolt extends BaseBasicBolt {
             	referee_name = (String) official.get("name");
             }
         }
+        //System.out.println(referee_name);
         collector.emit(new Values(referee_name, home_name, away_name, matchTime));
       }
       catch (ClassCastException e) {  

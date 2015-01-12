@@ -2,8 +2,13 @@ package test.java.nl.utwente.bigdata;
 
 import static org.junit.Assert.assertEquals;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.List;
 
@@ -38,6 +43,7 @@ public class WorldCupJsonToDataBoltTest {
 	// prepare bolt and output
 	@Before
 	public void before() {
+				
 		bolt = new WorldCupJsonToDataBolt();
 		col = new Collector();
 		collector = new BasicOutputCollector(new OutputCollector(col));

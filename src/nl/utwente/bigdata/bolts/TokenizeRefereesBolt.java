@@ -44,7 +44,7 @@ public class TokenizeRefereesBolt extends BaseBasicBolt {
 
 	  @Override
 	  public void declareOutputFields(OutputFieldsDeclarer declarer) {
-		  declarer.declare(new Fields("referees"));
+		  declarer.declare(new Fields("referee_name"));
 	  }
 
 }

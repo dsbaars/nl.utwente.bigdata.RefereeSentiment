@@ -28,29 +28,45 @@ import backtype.storm.utils.Utils;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Random;
 
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.JSONValue;
+import org.json.simple.parser.JSONParser;
 import org.yaml.snakeyaml.reader.StreamReader;
+
+import com.google.gson.reflect.TypeToken;
 
 public class WorldcupDataJsonSpout extends BaseRichSpout {
   private static final long serialVersionUID = -1497360044271864620L;
   SpoutOutputCollector _collector;
   Random _rand;
-  List<String> sentences = new ArrayList<String>(); 
+  List<String> matches = new ArrayList<String>(); 
 
   @Override
   public void open(Map conf, TopologyContext context, SpoutOutputCollector collector) {	
     try {
     	System.out.println("Reading worldcup-data");
-    	BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("worldcup-games.json")));
-		String line = null;
-		while ((line = reader.readLine()) != null) {
-			sentences.add(line);
-		}
+    	BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("worldcup-games.json")));
+    	StringBuilder sb = new StringBuilder();
+    	String line;
+		while ((line = reader.readLine()) != null) sb.append(line);
+		JSONParser parser=new JSONParser();
+		JSONArray collection = (JSONArray) parser.parse(sb.toString());
+		Iterator iter = collection.iterator();
+		while(iter.hasNext()){
+				JSONObject entry = (JSONObject)iter.next();
+		      matches.add(JSONValue.toJSONString( entry ));
+		  //    System.out.println(JSONValue.toJSONString( entry ));
+		    }
 		reader.close();
 		System.out.println("Reading done");
 	} catch (IOException e) {
@@ -65,9 +81,9 @@ public class WorldcupDataJsonSpout extends BaseRichSpout {
 
   @Override
   public void nextTuple() {
-    //Utils.sleep(100);
-    String sentence = sentences.get(_rand.nextInt(sentences.size()));
-    _collector.emit(new Values(sentence));
+   // Utils.sleep(100);
+    String match = matches.get(_rand.nextInt(matches.size()));
+    _collector.emit(new Values(match));
   }
 
   @Override

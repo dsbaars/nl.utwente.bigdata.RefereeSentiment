@@ -46,7 +46,8 @@ public class TweetsJsonSpout extends BaseRichSpout {
   public void open(Map conf, TopologyContext context, SpoutOutputCollector collector) {	
     try {
     	System.out.println("Reading tweets");
-    	BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("tweets")));
+    	BufferedReader reader = new BufferedReader(new InputStreamReader(getClass().getClassLoader().getResourceAsStream("tweets.json")));
+
 		String line = null;
 		while ((line = reader.readLine()) != null) {
 			sentences.add(line);
@@ -65,7 +66,7 @@ public class TweetsJsonSpout extends BaseRichSpout {
 
   @Override
   public void nextTuple() {
-    Utils.sleep(100);
+   // Utils.sleep(100);
     String sentence = sentences.get(_rand.nextInt(sentences.size()));
     _collector.emit(new Values(sentence));
   }

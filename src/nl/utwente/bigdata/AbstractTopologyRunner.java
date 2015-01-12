@@ -38,7 +38,7 @@ public abstract class AbstractTopologyRunner {
     public void runCluster(String name, Properties properties) throws AlreadyAliveException, InvalidTopologyException {	     
     	StormTopology topology = buildTopology(properties);    	
         Config conf = new Config(); 
-        conf.put(Config.NIMBUS_HOST, properties.getProperty("nimbus", "localhost"));
+        conf.put(Config.NIMBUS_HOST, properties.getProperty("nimbus", "localhost"));	
         System.out.println(conf.toString());
         StormSubmitter.submitTopology(name, conf, topology);
     }
@@ -49,19 +49,13 @@ public abstract class AbstractTopologyRunner {
         	String name = args[0];
         	String type = args[1];
         	Properties properties = new Properties();        	
-        	if (args.length > 2) {
-        		properties.load(new FileInputStream(args[2]));
-        	}
+
         	if (type.equals("local")) {
         		runLocal(name, properties);
         	} else {
         		runCluster(name, properties);
         	}
 
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
 		} catch (AlreadyAliveException e) {
 			e.printStackTrace();
 		} catch (InvalidTopologyException e) {
