@@ -21,6 +21,7 @@ package nl.utwente.bigdata;
 import java.util.Properties;
 
 import nl.utwente.bigdata.bolts.CalculateSentimentBolt;
+import nl.utwente.bigdata.bolts.FileOutputBolt;
 import nl.utwente.bigdata.bolts.GetRefereeTweetsBolt;
 import nl.utwente.bigdata.bolts.LinkToGameBolt;
 import nl.utwente.bigdata.bolts.NormalizerBolt;
@@ -91,7 +92,7 @@ public class RefereeSentiment extends AbstractTopologyRunner {
 
 		prevId = "refereeTweets";
 		boltId = "printer"; 
-		builder.setBolt(boltId, new PrinterBolt()).shuffleGrouping(prevId); 
+		builder.setBolt(boltId, new FileOutputBolt()).shuffleGrouping(prevId); 
 		prevId = boltId;
 		
 		StormTopology topology = builder.createTopology();
