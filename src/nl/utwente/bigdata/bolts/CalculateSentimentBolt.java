@@ -28,8 +28,7 @@ public class CalculateSentimentBolt extends BaseRichBolt {
 
 	@Override
 	public void execute(Tuple input) {
-		// TODO Auto-generated method stub
-
+		
 	}
 
 	@Override

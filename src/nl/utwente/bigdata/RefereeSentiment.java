@@ -20,6 +20,8 @@ package nl.utwente.bigdata;
 
 import java.util.Properties;
 
+import org.apache.storm.hdfs.bolt.HdfsBolt;
+
 import nl.utwente.bigdata.bolts.CalculateSentimentBolt;
 import nl.utwente.bigdata.bolts.FileOutputBolt;
 import nl.utwente.bigdata.bolts.GetRefereeTweetsBolt;
