@@ -1,4 +1,4 @@
-package test.java.nl.utwente.bigdata;
+package nl.utwente.bigdata;
 
 import static org.junit.Assert.assertEquals;
 

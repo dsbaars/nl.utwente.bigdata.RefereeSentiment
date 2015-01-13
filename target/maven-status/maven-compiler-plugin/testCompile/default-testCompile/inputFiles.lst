@@ -1,4 +1,6 @@
-/Users/dsbaars/Documents/managing-big-data-7/assignment-7/src/test/java/nl/utwente/bigdata/MovingAvgTest.java
-/Users/dsbaars/Documents/managing-big-data-7/assignment-7/src/test/java/nl/utwente/bigdata/Collector.java
-/Users/dsbaars/Documents/managing-big-data-7/assignment-7/src/test/java/nl/utwente/bigdata/NGramerTest.java
-/Users/dsbaars/Documents/managing-big-data-7/assignment-7/src/test/java/nl/utwente/bigdata/TopCounterBoltTest.java
+/Users/Martijn/Documents/Managing Big Data/assignment-7/src/test/java/nl/utwente/bigdata/WorldCupJsonToDataBoltTest.java
+/Users/Martijn/Documents/Managing Big Data/assignment-7/src/test/java/nl/utwente/bigdata/NormalizeTweetsBoltTest.java
+/Users/Martijn/Documents/Managing Big Data/assignment-7/src/test/java/nl/utwente/bigdata/Collector.java
+/Users/Martijn/Documents/Managing Big Data/assignment-7/src/test/java/nl/utwente/bigdata/TokenizeTweetsBoltTest.java
+/Users/Martijn/Documents/Managing Big Data/assignment-7/src/test/java/nl/utwente/bigdata/GetRefereeTweetsBoltTest.java
+/Users/Martijn/Documents/Managing Big Data/assignment-7/src/test/java/nl/utwente/bigdata/TokenizeRefereesBoltTest.java
