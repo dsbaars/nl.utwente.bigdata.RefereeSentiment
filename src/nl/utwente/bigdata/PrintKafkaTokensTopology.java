@@ -23,6 +23,9 @@ import java.util.Properties;
 import storm.kafka.KafkaSpout;
 import storm.kafka.SpoutConfig;
 import storm.kafka.ZkHosts;
+import nl.utwente.bigdata.bolts.FileOutputBolt;
+import nl.utwente.bigdata.bolts.GetRefereeTweetsBolt;
+import nl.utwente.bigdata.bolts.NormalizerBolt;
 import nl.utwente.bigdata.bolts.PrinterBolt;
 import nl.utwente.bigdata.bolts.TokenizerBolt;
 import nl.utwente.bigdata.bolts.TweetJsonToTextBolt;
@@ -37,7 +40,7 @@ public class PrintKafkaTokensTopology extends AbstractTopologyRunner {
 	protected StormTopology buildTopology(Properties properties) {
 		TopologyBuilder builder = new TopologyBuilder();
 		    
-		SpoutConfig spoutConf = new SpoutConfig(new ZkHosts(properties.getProperty("zkhost", "localhost:2181")),
+		SpoutConfig spoutConf = new SpoutConfig(new ZkHosts(properties.getProperty("zkhost", "ctit048.ewi.utwente.nl:2181")),
 				  properties.getProperty("topic", "worldcup"), // topic to read from
 				  "", // the root path in Zookeeper for the spout to store the consumer offsets
 				  "worldcup");
@@ -50,16 +53,24 @@ public class PrintKafkaTokensTopology extends AbstractTopologyRunner {
 		builder.setSpout(boltId, spout); 
 		prevId = boltId;
 		
-		boltId = "textify"; 
+		boltId = "tweetText"; 
 		builder.setBolt(boltId, new TweetJsonToTextBolt()).shuffleGrouping(prevId); 
 		prevId = boltId;
 		
-		boltId = "tokenizer"; 
-		builder.setBolt(boltId, new TokenizerBolt()).shuffleGrouping(prevId);
-		prevId = boltId;
+		//boltId = "tokenizer"; 
+		//builder.setBolt(boltId, new TokenizerBolt()).shuffleGrouping(prevId);
+		//prevId = boltId;
 		
+		//boltId = "printer"; 
+		//builder.setBolt(boltId, new PrinterBolt()).shuffleGrouping(prevId); 
+		//prevId = boltId;
+		
+		builder.setBolt("normalizedTweets", new NormalizerBolt()).shuffleGrouping("tweetText");
+		builder.setBolt("refereeTweets", new GetRefereeTweetsBolt()).shuffleGrouping("normalizedTweets"); 
+		
+		prevId = "refereeTweets";
 		boltId = "printer"; 
-		builder.setBolt(boltId, new PrinterBolt()).shuffleGrouping(prevId); 
+		builder.setBolt(boltId, new FileOutputBolt()).shuffleGrouping(prevId); 
 		prevId = boltId;
 		
 		StormTopology topology = builder.createTopology();
@@ -67,7 +78,6 @@ public class PrintKafkaTokensTopology extends AbstractTopologyRunner {
 		return topology;
 	}
 	
-    
     public static void main(String[] args) {
     	new PrintKafkaTokensTopology().run(args);;
     }
