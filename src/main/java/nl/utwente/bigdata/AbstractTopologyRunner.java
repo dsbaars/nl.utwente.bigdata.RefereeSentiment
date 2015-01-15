@@ -38,7 +38,7 @@ public abstract class AbstractTopologyRunner {
     public void runCluster(String name, Properties properties) throws AlreadyAliveException, InvalidTopologyException {	     
     	StormTopology topology = buildTopology(properties);    	
         Config conf = new Config(); 
-        conf.put(Config.NIMBUS_HOST, properties.getProperty("nimbus", "localhost"));	
+        conf.put(Config.NIMBUS_HOST, properties.getProperty("nimbus", "ctit048"));	
         System.out.println(conf.toString());
         StormSubmitter.submitTopology(name, conf, topology);
     }

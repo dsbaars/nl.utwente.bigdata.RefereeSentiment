@@ -28,6 +28,7 @@ import scala.collection.immutable.List;
 import storm.kafka.BrokerHosts;
 import storm.kafka.KafkaSpout;
 import storm.kafka.SpoutConfig;
+import storm.kafka.ZkHosts;
 import nl.utwente.bigdata.bolts.PrinterBolt;
 import nl.utwente.bigdata.bolts.TokenizerBolt;
 import nl.utwente.bigdata.bolts.TweetJsonToTextBolt;
@@ -39,13 +40,13 @@ import nl.utwente.bigdata.spouts.TwitterSpout;
 import backtype.storm.generated.StormTopology;
 import backtype.storm.topology.TopologyBuilder;
 
-public class HfdsTestTopology extends AbstractTopologyRunner {   
+public class HdfsTestToplogy extends AbstractTopologyRunner {   
 
 	@Override
 	protected StormTopology buildTopology(Properties properties) {
 		TopologyBuilder builder = new TopologyBuilder();
 		
-		SpoutConfig spoutConfig = new SpoutConfig((BrokerHosts) ImmutableList.of("ctit048.ewi.utwente.nl"), //List of Kafka brokers
+		SpoutConfig spoutConfig = new SpoutConfig((new ZkHosts(properties.getProperty("zkhost", "bigdatavm"))), //List of Kafka brokers
 				   "worldcup",      // Kafka topic to read from
 				   "/user/alyr/worldcup", // Root path in Zookeeper for the spout to store consumer offsets
 				   "discovery");  // ID for storing consumer offsets in Zookeeper
@@ -54,7 +55,7 @@ public class HfdsTestTopology extends AbstractTopologyRunner {
        
 		
 		String boltId = "printer"; 
-		builder.setBolt(boltId, new PrinterBolt()).shuffleGrouping("import"); 
+		builder.setBolt(boltId, new PrinterBolt()).shuffleGrouping("hdfs"); 
 		
 		StormTopology topology = builder.createTopology();
 		return topology;
@@ -63,6 +64,6 @@ public class HfdsTestTopology extends AbstractTopologyRunner {
 	
     
     public static void main(String[] args) {
-    	new HfdsTestTopology().run(args);;
+    	new HdfsTestToplogy().run(args);;
     }
 }

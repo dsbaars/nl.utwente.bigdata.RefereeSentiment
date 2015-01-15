@@ -20,6 +20,7 @@ package nl.utwente.bigdata;
 
 import java.util.Properties;
 
+import storm.kafka.KafkaConfig;
 import storm.kafka.KafkaSpout;
 import storm.kafka.SpoutConfig;
 import storm.kafka.ZkHosts;
@@ -40,11 +41,15 @@ public class PrintKafkaTokensTopology extends AbstractTopologyRunner {
 	protected StormTopology buildTopology(Properties properties) {
 		TopologyBuilder builder = new TopologyBuilder();
 		    
-		SpoutConfig spoutConf = new SpoutConfig(new ZkHosts(properties.getProperty("zkhost", "ctit048.ewi.utwente.nl:2181")),
-				  properties.getProperty("topic", "worldcup"), // topic to read from
-				  "", // the root path in Zookeeper for the spout to store the consumer offsets
-				  "worldcup");
-		KafkaSpout spout = new KafkaSpout(spoutConf);
+		SpoutConfig kafkaConf = new SpoutConfig(new ZkHosts(properties.getProperty("zkhost", "ctit048")),
+				  "worldcup", // topic to read from
+				  "/consumers", // the root path in Zookeeper for the spout to store the consumer offsets
+				  "default");
+		
+
+		
+		KafkaSpout spout = new KafkaSpout(kafkaConf);
+		
 	
 		String boltId = "";
 		String prevId;
@@ -53,22 +58,22 @@ public class PrintKafkaTokensTopology extends AbstractTopologyRunner {
 		builder.setSpout(boltId, spout); 
 		prevId = boltId;
 		
-		boltId = "tweetText"; 
-		builder.setBolt(boltId, new TweetJsonToTextBolt()).shuffleGrouping(prevId); 
-		prevId = boltId;
+//		boltId = "tweetText"; 
+//		builder.setBolt(boltId, new TweetJsonToTextBolt()).shuffleGrouping(prevId); 
+//		prevId = boltId;
+//		
+//		//boltId = "tokenizer"; 
+//		//builder.setBolt(boltId, new TokenizerBolt()).shuffleGrouping(prevId);
+//		//prevId = boltId;
+//		
+//		//boltId = "printer"; 
+//		//builder.setBolt(boltId, new PrinterBolt()).shuffleGrouping(prevId); 
+//		//prevId = boltId;
+//		
+//		builder.setBolt("normalizedTweets", new NormalizerBolt()).shuffleGrouping("tweetText");
+//		builder.setBolt("refereeTweets", new GetRefereeTweetsBolt()).shuffleGrouping("normalizedTweets"); 
 		
-		//boltId = "tokenizer"; 
-		//builder.setBolt(boltId, new TokenizerBolt()).shuffleGrouping(prevId);
-		//prevId = boltId;
-		
-		//boltId = "printer"; 
-		//builder.setBolt(boltId, new PrinterBolt()).shuffleGrouping(prevId); 
-		//prevId = boltId;
-		
-		builder.setBolt("normalizedTweets", new NormalizerBolt()).shuffleGrouping("tweetText");
-		builder.setBolt("refereeTweets", new GetRefereeTweetsBolt()).shuffleGrouping("normalizedTweets"); 
-		
-		prevId = "refereeTweets";
+		prevId = "kafka";
 		boltId = "printer"; 
 		builder.setBolt(boltId, new FileOutputBolt()).shuffleGrouping(prevId); 
 		prevId = boltId;
