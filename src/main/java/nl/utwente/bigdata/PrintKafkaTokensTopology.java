@@ -43,7 +43,7 @@ public class PrintKafkaTokensTopology extends AbstractTopologyRunner {
 		    
 		SpoutConfig kafkaConf = new SpoutConfig(new ZkHosts(properties.getProperty("zkhost", "ctit048")),
 				  "worldcup", // topic to read from
-				  "/consumers", // the root path in Zookeeper for the spout to store the consumer offsets
+				  "/brokers", // the root path in Zookeeper for the spout to store the consumer offsets
 				  "default");
 		
 
