@@ -23,6 +23,7 @@ import java.util.Properties;
 import storm.kafka.KafkaConfig;
 import storm.kafka.KafkaSpout;
 import storm.kafka.SpoutConfig;
+import storm.kafka.StringScheme;
 import storm.kafka.ZkHosts;
 import nl.utwente.bigdata.bolts.FileOutputBolt;
 import nl.utwente.bigdata.bolts.GetRefereeTweetsBolt;
@@ -32,6 +33,7 @@ import nl.utwente.bigdata.bolts.TokenizerBolt;
 import nl.utwente.bigdata.bolts.TweetJsonToTextBolt;
 import nl.utwente.bigdata.spouts.JsonSpout;
 import backtype.storm.generated.StormTopology;
+import backtype.storm.spout.SchemeAsMultiScheme;
 import backtype.storm.topology.TopologyBuilder;
 
 public class PrintKafkaTokensTopology extends AbstractTopologyRunner {   
@@ -41,21 +43,22 @@ public class PrintKafkaTokensTopology extends AbstractTopologyRunner {
 	protected StormTopology buildTopology(Properties properties) {
 		TopologyBuilder builder = new TopologyBuilder();
 		    
-		SpoutConfig kafkaConf = new SpoutConfig(new ZkHosts(properties.getProperty("zkhost", "ctit048")),
+		SpoutConfig kafkaConf = new SpoutConfig(new ZkHosts(properties.getProperty("zkhost", "studyserver2:2181")),
 				  "worldcup", // topic to read from
-				  "/consumers", // the root path in Zookeeper for the spout to store the consumer offsets
+				  "/brokers", // the root path in Zookeeper for the spout to store the consumer offsets
 				  "default");
 		
-
-		
-		KafkaSpout spout = new KafkaSpout(kafkaConf);
+		kafkaConf.scheme = new SchemeAsMultiScheme(new StringScheme());
+		kafkaConf.startOffsetTime = -2;
+		kafkaConf.forceFromStart = true;
+		builder.setSpout("kafka", new KafkaSpout(kafkaConf), 1);
 		
 	
 		String boltId = "";
 		String prevId;
 		
 		boltId = "kafka"; 
-		builder.setSpout(boltId, spout); 
+	//	builder.setSpout(boltId, spout); 
 		prevId = boltId;
 		
 //		boltId = "tweetText"; 
@@ -75,7 +78,7 @@ public class PrintKafkaTokensTopology extends AbstractTopologyRunner {
 		
 		prevId = "kafka";
 		boltId = "printer"; 
-		builder.setBolt(boltId, new FileOutputBolt()).shuffleGrouping(prevId); 
+		builder.setBolt(boltId, new PrinterBolt()).shuffleGrouping(prevId); 
 		prevId = boltId;
 		
 		StormTopology topology = builder.createTopology();
