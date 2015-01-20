@@ -43,14 +43,14 @@ public class PrintKafkaTokensTopology extends AbstractTopologyRunner {
 	protected StormTopology buildTopology(Properties properties) {
 		TopologyBuilder builder = new TopologyBuilder();
 		    
-		SpoutConfig kafkaConf = new SpoutConfig(new ZkHosts(properties.getProperty("zkhost", "studyserver2:2181")),
+		SpoutConfig kafkaConf = new SpoutConfig(new ZkHosts(properties.getProperty("zkhost", "ctit084.ewi.utwente.nl:2181")),
 				  "worldcup", // topic to read from
 				  "/brokers", // the root path in Zookeeper for the spout to store the consumer offsets
 				  "default");
 		
 		kafkaConf.scheme = new SchemeAsMultiScheme(new StringScheme());
-		kafkaConf.startOffsetTime = -2;
-		kafkaConf.forceFromStart = true;
+//		kafkaConf.startOffsetTime = -2;
+//		kafkaConf.forceFromStart = true;
 		builder.setSpout("kafka", new KafkaSpout(kafkaConf), 1);
 		
 	

@@ -43,7 +43,12 @@ public class TweetJsonToTextBolt extends BaseBasicBolt {
 	  try {
         Map<String, Object> tweet = (Map<String, Object>) parser.parse(tuple.getString(0));
         String text = (String) tweet.get("text");
-        collector.emit(new Values(text));
+        String lang = (String) tweet.get("lang");
+        String createdAt = (String) tweet.get("created_at");
+        
+        if (!(Boolean)tweet.get("retweeted")) {
+        	collector.emit(new Values(text, lang, createdAt));
+        }
       }
       catch (ClassCastException e) {  
     	System.out.println("ClassCass");
@@ -61,7 +66,7 @@ public class TweetJsonToTextBolt extends BaseBasicBolt {
 
   @Override
   public void declareOutputFields(OutputFieldsDeclarer declarer) {
-	  declarer.declare(new Fields("words"));
+	  declarer.declare(new Fields("words", "lang", "createdAt"));
   }
 
 }

@@ -30,8 +30,8 @@ public abstract class AbstractTopologyRunner {
         }
         LocalCluster cluster = new LocalCluster();        
         cluster.submitTopology(name, conf, topology);        
-        Utils.sleep(Integer.parseInt(properties.getProperty("sleep", 60 * 1000 + "")));
-        cluster.shutdown();
+       // Utils.sleep(Integer.parseInt(properties.getProperty("sleep", 60 * 1000 + "")));
+       // cluster.shutdown();
     }
     
     // start 

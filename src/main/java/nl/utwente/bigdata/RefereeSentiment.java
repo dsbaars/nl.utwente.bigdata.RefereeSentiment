@@ -22,8 +22,13 @@ import java.util.Properties;
 
 import org.apache.storm.hdfs.bolt.HdfsBolt;
 
+import storm.kafka.KafkaSpout;
+import storm.kafka.SpoutConfig;
+import storm.kafka.StringScheme;
+import storm.kafka.ZkHosts;
 import nl.utwente.bigdata.bolts.CalculateSentimentBolt;
 import nl.utwente.bigdata.bolts.FileOutputBolt;
+import nl.utwente.bigdata.bolts.FilterLanguageBolt;
 import nl.utwente.bigdata.bolts.GetRefereeTweetsBolt;
 import nl.utwente.bigdata.bolts.LinkToGameBolt;
 import nl.utwente.bigdata.bolts.NormalizerBolt;
@@ -36,6 +41,7 @@ import nl.utwente.bigdata.spouts.TweetsJsonSpout;
 import nl.utwente.bigdata.spouts.WorldcupDataJsonSpout;
 import nl.utwente.bigdata.spouts.TwitterSpout;
 import backtype.storm.generated.StormTopology;
+import backtype.storm.spout.SchemeAsMultiScheme;
 import backtype.storm.topology.TopologyBuilder;
 import backtype.storm.tuple.Fields;
 
@@ -50,6 +56,15 @@ public class RefereeSentiment extends AbstractTopologyRunner {
 	protected StormTopology buildTopology(Properties properties) {
 		TopologyBuilder builder = new TopologyBuilder();
       
+		SpoutConfig kafkaConf = new SpoutConfig(new ZkHosts(properties.getProperty("zkhost", "130.89.171.23:2181")),
+				  "worldcup", // topic to read from
+				  "/brokers", // the root path in Zookeeper for the spout to store the consumer offsets
+				  "default");
+		
+		kafkaConf.scheme = new SchemeAsMultiScheme(new StringScheme());
+//		kafkaConf.startOffsetTime = -2;
+//		kafkaConf.forceFromStart = true;
+		builder.setSpout("tweets", new KafkaSpout(kafkaConf), 1);
 		
 		String boltId = "";
 		String spoutId = "";
@@ -57,8 +72,8 @@ public class RefereeSentiment extends AbstractTopologyRunner {
 		
 		// We define two streams here, one with tweets
 		// the other with the world cup data
-		spoutId = "tweets"; 
-		builder.setSpout(spoutId, new TweetsJsonSpout()); 
+//		spoutId = "tweets"; 
+//		builder.setSpout(spoutId, new TweetsJsonSpout()); 
 		
 //		spoutId = "worldcupJson"; 
 //		builder.setSpout(spoutId, new WorldcupDataJsonSpout()); 
@@ -74,9 +89,15 @@ public class RefereeSentiment extends AbstractTopologyRunner {
 		// Get tweet texts
 		builder.setBolt("tweetText", new TweetJsonToTextBolt()).shuffleGrouping("tweets"); 			
 		
+		builder.setBolt("dutchTweets", new FilterLanguageBolt())
+			.shuffleGrouping("tweetText")
+		; 
+		
 		// Tokenize referees
 		builder.setBolt("normalizedTweets", new NormalizerBolt())
-			.shuffleGrouping("tweetText"); 
+			.shuffleGrouping("dutchTweets"); 
+		
+		
 //		
 //		// First step: Extract tweets about referees 
 		builder.setBolt("refereeTweets", new GetRefereeTweetsBolt())
@@ -84,17 +105,17 @@ public class RefereeSentiment extends AbstractTopologyRunner {
 		; 
 //		prevId = boltId;
 //		
-//		// Then: Calculate Sentiment
-//		boltId = "calculateSentiment"; 
-//		builder.setBolt(boltId, new CalculateSentimentBolt()).shuffleGrouping("tweetText"); 
-//		prevId = boltId;
+		// Then: Calculate Sentiment
+		boltId = "calculateSentiment"; 
+		builder.setBolt(boltId, new CalculateSentimentBolt()).shuffleGrouping("refereeTweets"); 
+		prevId = boltId;
 //		
 //		// Then: Link of games
 //		builder.setBolt(boltId, new LinkToGameBolt()).shuffleGrouping(prevId); 
 
-		prevId = "refereeTweets";
+		prevId = "calculateSentiment";
 		boltId = "printer"; 
-		builder.setBolt(boltId, new FileOutputBolt()).shuffleGrouping(prevId); 
+		builder.setBolt(boltId, new PrinterBolt()).shuffleGrouping(prevId); 
 		prevId = boltId;
 		
 		StormTopology topology = builder.createTopology();

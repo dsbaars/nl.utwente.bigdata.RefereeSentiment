@@ -1,16 +1,27 @@
 package nl.utwente.bigdata.bolts;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.util.List;
 import java.util.Map;
 import java.util.SortedMap;
 
+import com.google.common.base.Charsets;
+import com.google.common.base.Splitter;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.io.Resources;
 
 import twitter4j.Status;
 import backtype.storm.task.OutputCollector;
 import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseRichBolt;
+import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
+import backtype.storm.tuple.Values;
 
 /**
  * Calculates sentiment of tweet
@@ -23,34 +34,71 @@ import backtype.storm.tuple.Tuple;
 public class CalculateSentimentBolt extends BaseRichBolt {
 
 	private static final long serialVersionUID = -8884479245628635300L;
-	
+	private OutputCollector _collector;
 	private SortedMap<String, Integer> sentimentMap = null;
-
+	private String language;
+	
 	@Override
 	public void execute(Tuple input) {
+		final String tweet = ((String) input.getValue(0)).toLowerCase();
+		final int sentimentCurrentTweet = calculateSentiment(tweet);
 		
+		this._collector.emit(new Values(tweet, sentimentCurrentTweet));
 	}
 
 	@Override
 	public void prepare(Map map, TopologyContext topologyContext, OutputCollector collector) {
 		this.sentimentMap = Maps.newTreeMap();
 		
+		this._collector = collector;
 
+		//Bolt will read the AFINN Sentiment file [which is in the classpath] and stores the key, value pairs to a Map.
+		try {
+			final URL url = getClass().getClassLoader().getResource(
+					"AFINN-MULTI-111.txt");
+			final String text = Resources.toString(url, Charsets.UTF_8);
+			final Iterable<String> lineSplit = Splitter.on("\n").trimResults().omitEmptyStrings().split(text);
+			List<String> tabSplit;
+			for (final String str: lineSplit) {
+				tabSplit = Lists.newArrayList(Splitter.on("\t").trimResults().omitEmptyStrings().split(str));
+				
+				int lastRow = tabSplit.size()-1;
+				Integer sentimentScore =  Integer.parseInt(tabSplit.get(lastRow));
+				sentimentMap.put(tabSplit.get(1), sentimentScore);
+				sentimentMap.put(tabSplit.get(2), sentimentScore);
+				sentimentMap.put(tabSplit.get(3), sentimentScore);
+				sentimentMap.put(tabSplit.get(4), sentimentScore);
+				sentimentMap.put(tabSplit.get(5), sentimentScore);
+				sentimentMap.put(tabSplit.get(6), sentimentScore);
+			}
+		} catch (final IOException e) {
+			e.printStackTrace();
+			//Should not occur. If it occurs, we cant continue. So, exiting at this point itself.
+			System.exit(1);
+		}
 	}
 
 	@Override
 	public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {
-		// TODO Auto-generated method stub
-
+		outputFieldsDeclarer.declare(new Fields("tweet", "sentiment"));
 	}
 
 	/**
 	 * Actual calculation method
 	 * @return
 	 */
-	protected final int calculateSentiment(Status message) {
+	protected final int calculateSentiment(String tweet) {
+		final Iterable<String> words = Splitter.on(' ')
+                .trimResults()
+                .omitEmptyStrings()
+                .split(tweet);
 		int calculatedSentiment = 0;
-		
+		//Loop thru all the wordsd and find the sentiment of this tweet.
+		for (final String word : words) {
+			if(sentimentMap.containsKey(word)){
+				calculatedSentiment += this.sentimentMap.get(word);
+			}
+		}
 		return calculatedSentiment;
 	}
 }

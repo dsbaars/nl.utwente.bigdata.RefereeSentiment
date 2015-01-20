@@ -91,6 +91,10 @@ public class GetRefereeTweetsBolt extends BaseRichBolt {
 		this.refereesTokenized = new ArrayList<String>();
 		this.refereesTokenized.add("referee");
 		this.refereesTokenized.add("referees");
+		this.refereesTokenized.add("scheidsrechter");
+		this.refereesTokenized.add("arbitre");
+		this.refereesTokenized.add("arbitro");
+		this.refereesTokenized.add("schiedsrichter");
 		
 		Iterator iter = collection.iterator();
 		while (iter.hasNext()) {
