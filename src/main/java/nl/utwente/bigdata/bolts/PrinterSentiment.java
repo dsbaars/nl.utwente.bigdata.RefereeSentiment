@@ -19,6 +19,7 @@ package nl.utwente.bigdata.bolts;
 
 import java.util.Map;
 
+import twitter4j.Status;
 import nl.utwente.bigdata.Emoji;
 import backtype.storm.Config;
 import backtype.storm.task.TopologyContext;
@@ -55,7 +56,11 @@ public class PrinterSentiment extends BaseBasicBolt {
 	  } else {
 		  icon = ":-)";
 	  }
-    System.out.println(Emoji.replaceFlagInText(this.language) + " " +Emoji.replaceInText(icon) + " " + tuple.getStringByField("tweet").replace("\n", "").replace("\r",  "") + " " + tuple.getValueByField("sentiment"));
+	  
+	String tweetText = ((Status)tuple.getValueByField("tweet")).getText().replace("\n", "").replace("\r",  "");
+    System.out.println(Emoji.replaceFlagInText(this.language) 
+    		+ " " +Emoji.replaceInText(icon) + " " 
+    		+ tweetText + " " + tuple.getValueByField("sentiment"));
   }
 
   @Override

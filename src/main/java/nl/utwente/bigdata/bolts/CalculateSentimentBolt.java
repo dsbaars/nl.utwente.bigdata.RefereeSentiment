@@ -47,7 +47,7 @@ public class CalculateSentimentBolt extends BaseRichBolt {
 
 	@Override
 	public void execute(Tuple input) {
-		String tweet = input.getStringByField("tweet");
+		Status tweet = (Status) input.getValueByField("tweet");
 		String normalized_text = ((String) input.getStringByField("normalized_text")).toLowerCase();
 		
 		final int sentimentCurrentTweet = calculateSentiment(normalized_text);

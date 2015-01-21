@@ -24,6 +24,7 @@ import java.util.regex.Pattern;
 
 import org.apache.log4j.Logger;
 
+import twitter4j.Status;
 import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.BasicOutputCollector;
 import backtype.storm.topology.OutputFieldsDeclarer;
@@ -53,10 +54,10 @@ public class FilterLanguageBolt extends BaseBasicBolt {
   @Override
   public void execute(Tuple tuple, BasicOutputCollector collector) {
 		String lang = tuple.getStringByField("lang");
+		Status status =  (Status) tuple.getValueByField("tweet");
 		
-		
-		if (Arrays.asList(this.languages).contains(lang)) {
-			collector.emit(lang, tuple.getValues());
+		if (Arrays.asList(this.languages).contains(status.getLang())) {
+			collector.emit(status.getLang(), tuple.getValues());
 		} else {
 			//logger.info(lang + " not found");
 		}
@@ -67,6 +68,7 @@ public class FilterLanguageBolt extends BaseBasicBolt {
   public void declareOutputFields(OutputFieldsDeclarer declarer) {
 	  for (String lang: this.languages) {
 		  declarer.declareStream(lang, new Fields("tweet", "normalized_text", "lang"));
+		  logger.info("Filter language prepared for " + lang);
 	  }
   }
 
