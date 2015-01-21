@@ -43,17 +43,24 @@ public class NormalizerBolt extends BaseBasicBolt {
   @Override
   public void execute(Tuple tuple, BasicOutputCollector collector) {
 		String val = tuple.getStringByField(this.field);
+		String lang = tuple.getStringByField("lang");
+		String createdAt = tuple.getStringByField("createdAt");
+		
 		// from: http://stackoverflow.com/questions/1008802/converting-symbols-accent-letters-to-english-alphabet
 	    Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
 	    String nfdNormalizedString = "";	
 		nfdNormalizedString = Normalizer.normalize(val, Normalizer.Form.NFD); 
-    	collector.emit(new Values((String)pattern.matcher(nfdNormalizedString.toLowerCase()).replaceAll("")));
-
+		
+		String normalizedTweet = (String)pattern.matcher(nfdNormalizedString.toLowerCase()).replaceAll("");
+		// Also remove prefixed with rt
+		if (!normalizedTweet.startsWith("rt")) {
+			collector.emit(new Values(normalizedTweet, lang, createdAt));
+		}
   }
 
   @Override
   public void declareOutputFields(OutputFieldsDeclarer declarer) {
-	  declarer.declare(new Fields("words"));
+	  declarer.declare(new Fields("words", "lang", "createdAt"));
   }
 
 }

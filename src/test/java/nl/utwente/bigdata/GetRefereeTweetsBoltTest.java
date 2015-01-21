@@ -40,7 +40,7 @@ public class GetRefereeTweetsBoltTest {
 	// prepare bolt and output
 	@Before
 	public void before() {
-		bolt = new GetRefereeTweetsBolt();
+		bolt = new GetRefereeTweetsBolt("en");
 		col = new Collector();
 		output = new OutputCollector(col);
 		collector = new BasicOutputCollector(output);
@@ -53,7 +53,7 @@ public class GetRefereeTweetsBoltTest {
 		//String[] tokenizedReferees = {"djamel", "haimoudi", "cakir"};
 		String tweet = "referee #haimoudi....what a joke...what a joke...even @fifaworldcup @fifacom doesn't take 3rd place matches serious #branet #worldcup;";
 		
-		bolt = new GetRefereeTweetsBolt();
+		bolt = new GetRefereeTweetsBolt("en");
         bolt.prepare(config, context, output);
         bolt.execute(generateTestTuple(tweet));
         assertEquals(1, col.output.size());

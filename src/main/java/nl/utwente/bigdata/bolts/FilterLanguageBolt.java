@@ -18,8 +18,11 @@
 package nl.utwente.bigdata.bolts;
 
 import java.text.Normalizer;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.regex.Pattern;
+
+import org.apache.log4j.Logger;
 
 import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.BasicOutputCollector;
@@ -29,31 +32,42 @@ import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
 import backtype.storm.tuple.Values;
 
-
+/**
+ * Split to multiple language streams
+ * @TODO: implement
+ * 
+ * @author Djuri Baars
+ * @author Martijn Hensema
+ * @package Assignment7 
+ */
 public class FilterLanguageBolt extends BaseBasicBolt {
-
+	public static final Logger logger = Logger.getLogger(FilterLanguageBolt.class);  
 	private static final long serialVersionUID = -8526320899331924698L;
-	private String language;
+	private final String[]languages = new String[]{"en", "fr", "es", "it", "de", "nl"};
 
   @Override
   public void prepare(Map stormConf, TopologyContext context) {
-	  this.language = "nl";
+	  
   }
   
   @Override
   public void execute(Tuple tuple, BasicOutputCollector collector) {
 		String lang = tuple.getStringByField("lang");
-		if (lang.equals(this.language)) {
-			collector.emit(tuple.getValues());
+		
+		
+		if (Arrays.asList(this.languages).contains(lang)) {
+			collector.emit(lang, tuple.getValues());
 		} else {
-		//	System.out.println(lang);
+			//logger.info(lang + " not found");
 		}
 
   }
 
   @Override
   public void declareOutputFields(OutputFieldsDeclarer declarer) {
-	  declarer.declare(new Fields("words", "lang", "createdAt"));
+	  for (String lang: this.languages) {
+		  declarer.declareStream(lang, new Fields("words", "lang", "createdAt"));
+	  }
   }
 
 }

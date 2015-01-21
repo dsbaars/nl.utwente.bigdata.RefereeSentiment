@@ -1,21 +1,13 @@
 package nl.utwente.bigdata;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.Properties;
 
-import nl.utwente.bigdata.bolts.PrinterBolt;
-import nl.utwente.bigdata.spouts.TwitterSpout;
 import backtype.storm.Config;
 import backtype.storm.LocalCluster;
 import backtype.storm.StormSubmitter;
 import backtype.storm.generated.AlreadyAliveException;
 import backtype.storm.generated.InvalidTopologyException;
 import backtype.storm.generated.StormTopology;
-import backtype.storm.topology.BoltDeclarer;
-import backtype.storm.topology.TopologyBuilder;
-import backtype.storm.utils.Utils;
 
 public abstract class AbstractTopologyRunner {
 	
@@ -45,22 +37,10 @@ public abstract class AbstractTopologyRunner {
     
     // Starts a topology based on it's command line 
     public void run(String[] args) {
-    	try {
-        	String name = args[0];
-        	String type = args[1];
-        	Properties properties = new Properties();        	
-
-        	if (type.equals("local")) {
-        		runLocal(name, properties);
-        	} else {
-        		runCluster(name, properties);
-        	}
-
-		} catch (AlreadyAliveException e) {
-			e.printStackTrace();
-		} catch (InvalidTopologyException e) {
-			e.printStackTrace();
-		}
+    	String name = args[0];
+//        	String type = args[1];
+		Properties properties = new Properties();        	
+		runLocal(name, properties);
     }
     
 }

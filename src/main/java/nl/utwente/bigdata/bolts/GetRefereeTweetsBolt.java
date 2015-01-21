@@ -3,6 +3,7 @@ package nl.utwente.bigdata.bolts;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.net.URL;
 import java.text.Normalizer;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -13,15 +14,23 @@ import java.util.Map;
 import java.util.SortedMap;
 import java.util.regex.Pattern;
 
+import nl.utwente.bigdata.RefereeSentiment;
+
+import org.apache.log4j.Logger;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import com.google.common.base.Charsets;
+import com.google.common.base.Splitter;
+import com.google.common.collect.Lists;
 import com.google.common.collect.Maps;
+import com.google.common.io.Resources;
 
 import twitter4j.Status;
+import backtype.storm.Config;
 import backtype.storm.task.OutputCollector;
 import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.BasicOutputCollector;
@@ -43,8 +52,20 @@ import backtype.storm.tuple.Values;
  */
 public class GetRefereeTweetsBolt extends BaseRichBolt {
 	private OutputCollector _collector;
+	public static final Logger logger = Logger.getLogger(GetRefereeTweetsBolt.class);  
+
 	Map<String, String> _map;
 	private ArrayList<String> refereesTokenized;
+	private String language;
+	
+	public GetRefereeTweetsBolt(Config conf) {
+		this.language = (String) conf.get("language");
+	}
+
+	public GetRefereeTweetsBolt(String string) {
+		this.language = string;
+	}
+
 	@Override
 	public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {
 		outputFieldsDeclarer.declare(new Fields("tweet", "referee_name"));
@@ -53,7 +74,7 @@ public class GetRefereeTweetsBolt extends BaseRichBolt {
 	@Override
 	public void execute(Tuple input) {
 		String tweet = ((String) input.getValue(0)).toLowerCase();
-	
+		//logger.info(tweet);
 			for (int i = 0; i < this.refereesTokenized.size(); i++) {
 				if (tweet.contains(this.refereesTokenized.get(i))) {
 					this._collector.emit(new Values(tweet, this.refereesTokenized.get(i)));
@@ -66,11 +87,11 @@ public class GetRefereeTweetsBolt extends BaseRichBolt {
 	public void prepare(Map map, TopologyContext topologyContext,
 			OutputCollector collector) {
 		this._collector = collector;
-	//	this._map = map;
+		this._map = map;
 
 		BufferedReader reader = new BufferedReader(new InputStreamReader(
 				getClass().getClassLoader().getResourceAsStream(
-						"worldcup-games.json")));
+						"wcdata/worldcup-games.json")));
 		StringBuilder sb = new StringBuilder();
 		String line;
 		try {
@@ -88,14 +109,25 @@ public class GetRefereeTweetsBolt extends BaseRichBolt {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		this.refereesTokenized = new ArrayList<String>();
-		this.refereesTokenized.add("referee");
-		this.refereesTokenized.add("referees");
-		this.refereesTokenized.add("scheidsrechter");
-		this.refereesTokenized.add("arbitre");
-		this.refereesTokenized.add("arbitro");
-		this.refereesTokenized.add("schiedsrichter");
 		
+		final String refereeFilePath = "lang/" + this.language + "/refereewords.txt";
+		this.refereesTokenized = new ArrayList<String>();
+
+		try {
+			final URL url = getClass().getClassLoader().getResource(
+					refereeFilePath);
+			final String text = Resources.toString(url, Charsets.UTF_8);
+			final Iterable<String> lineSplit = Splitter.on("\n").trimResults().omitEmptyStrings().split(text);
+			List<String> tabSplit;
+			for (final String str: lineSplit) {
+				this.refereesTokenized.add(str);
+			}
+		} catch (final IOException e) {
+			e.printStackTrace();
+			//Should not occur. If it occurs, we cant continue. So, exiting at this point itself.
+			System.exit(1);
+		}
+
 		Iterator iter = collection.iterator();
 		while (iter.hasNext()) {
 			// JSONObject entry =

@@ -15,6 +15,7 @@ import com.google.common.collect.Maps;
 import com.google.common.io.Resources;
 
 import twitter4j.Status;
+import backtype.storm.Config;
 import backtype.storm.task.OutputCollector;
 import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.OutputFieldsDeclarer;
@@ -38,6 +39,12 @@ public class CalculateSentimentBolt extends BaseRichBolt {
 	private SortedMap<String, Integer> sentimentMap = null;
 	private String language;
 	
+	
+	
+	public CalculateSentimentBolt(Config conf) {
+		this.language = (String) conf.get("language");
+	}
+
 	@Override
 	public void execute(Tuple input) {
 		final String tweet = ((String) input.getValue(0)).toLowerCase();
@@ -51,11 +58,13 @@ public class CalculateSentimentBolt extends BaseRichBolt {
 		this.sentimentMap = Maps.newTreeMap();
 		
 		this._collector = collector;
+		
+		final String sentimentFilePath = "lang/" + this.language + "/sentiment.txt";
 
 		//Bolt will read the AFINN Sentiment file [which is in the classpath] and stores the key, value pairs to a Map.
 		try {
 			final URL url = getClass().getClassLoader().getResource(
-					"AFINN-MULTI-111.txt");
+					sentimentFilePath);
 			final String text = Resources.toString(url, Charsets.UTF_8);
 			final Iterable<String> lineSplit = Splitter.on("\n").trimResults().omitEmptyStrings().split(text);
 			List<String> tabSplit;
@@ -64,12 +73,7 @@ public class CalculateSentimentBolt extends BaseRichBolt {
 				
 				int lastRow = tabSplit.size()-1;
 				Integer sentimentScore =  Integer.parseInt(tabSplit.get(lastRow));
-				sentimentMap.put(tabSplit.get(1), sentimentScore);
-				sentimentMap.put(tabSplit.get(2), sentimentScore);
-				sentimentMap.put(tabSplit.get(3), sentimentScore);
-				sentimentMap.put(tabSplit.get(4), sentimentScore);
-				sentimentMap.put(tabSplit.get(5), sentimentScore);
-				sentimentMap.put(tabSplit.get(6), sentimentScore);
+				sentimentMap.put(tabSplit.get(0), sentimentScore);
 			}
 		} catch (final IOException e) {
 			e.printStackTrace();
