@@ -32,6 +32,7 @@ import backtype.storm.tuple.Values;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import twitter4j.Status;
 import twitter4j.TwitterException;
 import twitter4j.TwitterObjectFactory;
 
@@ -67,7 +68,7 @@ public class GetMatchesBoltTest {
 		bolt.prepare(config, context, output);
 	    bolt.execute(generateTestTuple(TwitterObjectFactory.createStatus(tweetJson), "en", testCreatedAt));
 
-		assertEquals("Iran", col.output.get(0).get(2));
+		assertEquals("Iran", col.output.get(0).get(4));
 	}
 		
 	@SuppressWarnings("rawtypes")
@@ -76,10 +77,10 @@ public class GetMatchesBoltTest {
         GeneralTopologyContext topologyContext = new GeneralTopologyContext(builder.createTopology(), new Config(), new HashMap(), new HashMap(), new HashMap(), "") {
             @Override
             public Fields getComponentOutputFields(String componentId, String streamId) {
-                return new Fields("tweet", "normalized_tweet");
+                return new Fields("tweet", "normalized_text", "sentiment");
             }
         };
-        return new TupleImpl(topologyContext, new Values(tweet, lang), 1, "");
+        return new TupleImpl(topologyContext, new Values(tweet, ((Status)tweet).getText(), 0), 1, "");
     }
 	
 }

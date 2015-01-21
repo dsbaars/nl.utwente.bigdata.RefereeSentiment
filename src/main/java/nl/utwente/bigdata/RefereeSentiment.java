@@ -30,6 +30,7 @@ import storm.kafka.ZkHosts;
 import nl.utwente.bigdata.bolts.CalculateSentimentBolt;
 import nl.utwente.bigdata.bolts.FileOutputBolt;
 import nl.utwente.bigdata.bolts.FilterLanguageBolt;
+import nl.utwente.bigdata.bolts.GetMatchesBolt;
 import nl.utwente.bigdata.bolts.GetRefereeTweetsBolt;
 import nl.utwente.bigdata.bolts.LinkToGameBolt;
 import nl.utwente.bigdata.bolts.NormalizerBolt;
@@ -87,6 +88,7 @@ public class RefereeSentiment extends AbstractTopologyRunner {
 		
 		final String getRefereeBoltName = "%s_getReferee";
 		final String calculateSentimentBoltName = "%s_calculateSentiment";
+		final String getMatchesBoltName = "%s_matches";
 		final String printerBoltName = "%s_printer";
 		
 		for (String lang: this.languages) {
@@ -105,9 +107,14 @@ public class RefereeSentiment extends AbstractTopologyRunner {
 				.shuffleGrouping(String.format(getRefereeBoltName, lang))
 			;
 			
+			// Then: Append Match 
+			builder.setBolt(String.format(getMatchesBoltName, lang), new GetMatchesBolt())
+				.shuffleGrouping(String.format(calculateSentimentBoltName, lang))
+			;
+			
 			// Each language gets a printer ...for now
 			builder.setBolt(String.format(printerBoltName, lang), new PrinterSentiment(conf))
-				.shuffleGrouping(String.format(calculateSentimentBoltName, lang))
+				.shuffleGrouping(String.format(getMatchesBoltName, lang))
 			; 
 		}
 				

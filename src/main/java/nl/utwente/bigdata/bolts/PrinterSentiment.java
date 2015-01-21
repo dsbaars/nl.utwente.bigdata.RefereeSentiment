@@ -60,6 +60,7 @@ public class PrinterSentiment extends BaseBasicBolt {
 	String tweetText = ((Status)tuple.getValueByField("tweet")).getText().replace("\n", "").replace("\r",  "");
     System.out.println(Emoji.replaceFlagInText(this.language) 
     		+ " " +Emoji.replaceInText(icon) + " " 
+    		+ "MATCH: " + tuple.getValueByField("home") + "-" + tuple.getValueByField("away")
     		+ tweetText + " " + tuple.getValueByField("sentiment"));
   }
 

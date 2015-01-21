@@ -65,7 +65,7 @@ public class GetMatchesBolt extends BaseRichBolt {
 		Pair<String, String> match = this.matchesMap.get(this.matchesMap.lowerKey(status.getCreatedAt()));
 		
 		
-		this._collector.emit(new Values(status, match.getLeft(), match.getRight()));
+		this._collector.emit(new Values(status, input.getValueByField("normalized_text"), input.getValueByField("sentiment"), match.getLeft(), match.getRight()));
 	}
 
 	@Override
@@ -78,7 +78,7 @@ public class GetMatchesBolt extends BaseRichBolt {
 
 	@Override
 	public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {
-		outputFieldsDeclarer.declare(new Fields("tweet", "home", "away"));
+		outputFieldsDeclarer.declare(new Fields("tweet", "normalized_text", "sentiment", "home", "away"));
 	}
 
 
