@@ -8,6 +8,7 @@ import backtype.storm.StormSubmitter;
 import backtype.storm.generated.AlreadyAliveException;
 import backtype.storm.generated.InvalidTopologyException;
 import backtype.storm.generated.StormTopology;
+import backtype.storm.utils.Utils;
 
 public abstract class AbstractTopologyRunner {
 	
@@ -22,8 +23,8 @@ public abstract class AbstractTopologyRunner {
         }
         LocalCluster cluster = new LocalCluster();        
         cluster.submitTopology(name, conf, topology);        
-       // Utils.sleep(Integer.parseInt(properties.getProperty("sleep", 60 * 1000 + "")));
-       // cluster.shutdown();
+        Utils.sleep(Integer.parseInt(properties.getProperty("sleep", 60 * 1000 + "")));
+        cluster.shutdown();
     }
     
     // start 

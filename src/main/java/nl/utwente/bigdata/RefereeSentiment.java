@@ -90,6 +90,7 @@ public class RefereeSentiment extends AbstractTopologyRunner {
 		final String calculateSentimentBoltName = "%s_calculateSentiment";
 		final String getMatchesBoltName = "%s_matches";
 		final String printerBoltName = "%s_printer";
+		final String fileOutputBoltName = "%s_file_output";
 		
 		for (String lang: this.languages) {
 			Config conf = new Config();
@@ -112,8 +113,12 @@ public class RefereeSentiment extends AbstractTopologyRunner {
 				.shuffleGrouping(String.format(calculateSentimentBoltName, lang))
 			;
 			
-			// Each language gets a printer ...for now
 			builder.setBolt(String.format(printerBoltName, lang), new PrinterSentiment(conf))
+				.shuffleGrouping(String.format(getMatchesBoltName, lang))
+			; 
+			
+			// Each language gets a printer ...for now
+			builder.setBolt(String.format(fileOutputBoltName, lang), new FileOutputBolt())
 				.shuffleGrouping(String.format(getMatchesBoltName, lang))
 			; 
 		}

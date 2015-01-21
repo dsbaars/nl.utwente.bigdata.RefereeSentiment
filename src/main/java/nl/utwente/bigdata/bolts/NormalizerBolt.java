@@ -58,7 +58,7 @@ public class NormalizerBolt extends BaseBasicBolt {
 		String nfdNormalizedString = "";	
 		nfdNormalizedString = Normalizer.normalize(tweet.getText(), Normalizer.Form.NFD); 
 		
-		String normalizedTweet = (String)pattern.matcher(nfdNormalizedString.toLowerCase()).replaceAll("");
+		String normalizedTweet = (String)pattern.matcher(nfdNormalizedString.toLowerCase()).replaceAll("").replace("\n", "").replace("\r",  "");
 		// Also remove prefixed with rt
 		if (!normalizedTweet.startsWith("rt")) {
 			collector.emit(new Values(tweet, normalizedTweet, tweet.getLang()));

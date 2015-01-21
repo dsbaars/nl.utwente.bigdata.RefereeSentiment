@@ -57,7 +57,7 @@ public class PrinterSentiment extends BaseBasicBolt {
 		  icon = ":-)";
 	  }
 	Status tweet = (Status)tuple.getValueByField("tweet");
-	String tweetText = tweet.getText().replace("\n", "").replace("\r",  "");
+	String tweetText = tweet.getText();
     System.out.println(Emoji.replaceFlagInText(this.language) 
     		+ " " +Emoji.replaceInText(icon) + " " 
     		+ "DATE: " + tweet.getCreatedAt().toGMTString() + " "
