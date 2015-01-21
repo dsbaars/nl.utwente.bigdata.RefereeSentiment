@@ -73,13 +73,13 @@ public class GetRefereeTweetsBolt extends BaseRichBolt {
 
 	@Override
 	public void execute(Tuple input) {
-		String tweet = input.getStringByField("tweet");
+		Status tweet = (Status) input.getValueByField("tweet");
 
 		String normalized_text = ((String) input.getStringByField("normalized_text")).toLowerCase();
 		//logger.info(tweet);
 			for (int i = 0; i < this.refereesTokenized.size(); i++) {
-				if (tweet.contains(this.refereesTokenized.get(i))) {
-					this._collector.emit(new Values(tweet, this.refereesTokenized.get(i)));
+				if (normalized_text.contains(this.refereesTokenized.get(i))) {
+					this._collector.emit(new Values(tweet, normalized_text, this.refereesTokenized.get(i)));
 				}
 			}
 		

@@ -28,6 +28,9 @@ import backtype.storm.tuple.Values;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import twitter4j.TwitterException;
+import twitter4j.TwitterObjectFactory;
+
 public class GetRefereeTweetsBoltTest {
 	private GetRefereeTweetsBolt bolt; 
 	private BasicOutputCollector collector;
@@ -48,14 +51,14 @@ public class GetRefereeTweetsBoltTest {
 	}
 	
 	@Test
-	public void testContainingTweet() {
+	public void testContainingTweet() throws TwitterException {
 		//ArrayList<String> referees = new ArrayList<String>();
 		//String[] tokenizedReferees = {"djamel", "haimoudi", "cakir"};
-		String tweet = "referee #haimoudi....what a joke...what a joke...even @fifaworldcup @fifacom doesn't take 3rd place matches serious #branet #worldcup;";
+		String tweet = "{ \"text\": \"referee #haimoudi....what a joke...what a joke...even @fifaworldcup @fifacom doesn't take 3rd place matches serious #branet #worldcup;\" }";
 		
 		bolt = new GetRefereeTweetsBolt("en");
         bolt.prepare(config, context, output);
-        bolt.execute(generateTestTuple(tweet));
+        bolt.execute(generateTestTuple(TwitterObjectFactory.createStatus(tweet), "referee #haimoudi....what a joke...what a joke...even @fifaworldcup @fifacom doesn't take 3rd place matches serious #branet #worldcup;"));
         assertEquals(1, col.output.size());
 	}
 //	
@@ -71,7 +74,7 @@ public class GetRefereeTweetsBoltTest {
 //	}
 		
 	@SuppressWarnings("rawtypes")
-	private Tuple generateTestTuple(String tweet) {
+	private Tuple generateTestTuple(Object tweet, Object normalized) {
         TopologyBuilder builder = new TopologyBuilder();
         GeneralTopologyContext topologyContext = new GeneralTopologyContext(builder.createTopology(), new Config(), new HashMap(), new HashMap(), new HashMap(), "") {
             @Override
@@ -79,7 +82,7 @@ public class GetRefereeTweetsBoltTest {
                 return new Fields("tweet", "normalized_text", "lang");
             }
         };
-        return new TupleImpl(topologyContext, new Values(tweet, tweet, "en"), 1, "");
+        return new TupleImpl(topologyContext, new Values(tweet, normalized, "en"), 1, "");
     }
 	
 }

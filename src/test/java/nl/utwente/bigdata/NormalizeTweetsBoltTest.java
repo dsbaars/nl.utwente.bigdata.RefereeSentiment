@@ -29,6 +29,9 @@ import backtype.storm.tuple.Values;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import twitter4j.TwitterException;
+import twitter4j.TwitterObjectFactory;
+
 public class NormalizeTweetsBoltTest {
 	private NormalizerBolt bolt; 
 	private BasicOutputCollector collector;
@@ -48,12 +51,12 @@ public class NormalizeTweetsBoltTest {
 	}
 	
 	@Test
-	public void testNormalizer() {
+	public void testNormalizer() throws TwitterException {
 		bolt = new NormalizerBolt();		
         bolt.prepare(config, context);
 		String testTweet = "{ \"text\": \"Referee #haïmoudi....what a joke...what a joke...even @FIFAWorldCup @FIFAcom doesn't take 3rd place matches serious #BRANET #WorldCup;\", \"lang\": \"nl\" }";
 		String expectedNormalizedString = "referee #haimoudi....what a joke...what a joke...even @fifaworldcup @fifacom doesn't take 3rd place matches serious #branet #worldcup;";
-		bolt.execute(generateTestTuple(testTweet), collector);
+		bolt.execute(generateTestTuple(TwitterObjectFactory.createStatus(testTweet)), collector);
 	//	assertEquals(new Values(new Values(expectedNormalizedString, "nl")), col.output);
 		assertEquals(col.output.get(0).get(1), expectedNormalizedString);
 		assertEquals(col.output.get(0).get(2), "nl");

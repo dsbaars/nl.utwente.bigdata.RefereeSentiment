@@ -22,6 +22,7 @@ import java.util.Map;
 import org.json.simple.parser.JSONParser;
 
 import twitter4j.Status;
+import twitter4j.TwitterObjectFactory;
 import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.BasicOutputCollector;
 import backtype.storm.topology.OutputFieldsDeclarer;
@@ -42,7 +43,7 @@ public class TweetJsonToTextBolt extends BaseBasicBolt {
   @Override
   public void execute(Tuple tuple, BasicOutputCollector collector) {
 	  try {
-        Status tweet = (Status) parser.parse(tuple.getString(0));
+        Status tweet =  TwitterObjectFactory.createStatus(tuple.getString(0));
 //        String text = (String) tweet.get("text");
 //        String lang = (String) tweet.get("lang");
 //        String createdAt = (String) tweet.get("created_at");
@@ -56,11 +57,7 @@ public class TweetJsonToTextBolt extends BaseBasicBolt {
     	e.printStackTrace();
         return; // do nothing (we might log this)
       }
-      catch (org.json.simple.parser.ParseException e) {
-    	System.out.println("ParseException");
-    	e.printStackTrace();
-        return; // do nothing 
-      } catch (Exception e) {
+      catch (Exception e) {
     	  e.printStackTrace();
       }
   }

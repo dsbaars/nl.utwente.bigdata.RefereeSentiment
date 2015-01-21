@@ -51,22 +51,17 @@ public class NormalizerBolt extends BaseBasicBolt {
   @Override
   public void execute(Tuple tuple, BasicOutputCollector collector) {
 	  	Status tweet;
-		try {
-			tweet = TwitterObjectFactory.createStatus(tuple.getStringByField("tweet"));
+		tweet = (Status) tuple.getValueByField("tweet");
+
+		// from: http://stackoverflow.com/questions/1008802/converting-symbols-accent-letters-to-english-alphabet
+		Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
+		String nfdNormalizedString = "";	
+		nfdNormalizedString = Normalizer.normalize(tweet.getText(), Normalizer.Form.NFD); 
 		
-			// from: http://stackoverflow.com/questions/1008802/converting-symbols-accent-letters-to-english-alphabet
-		    Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
-		    String nfdNormalizedString = "";	
-			nfdNormalizedString = Normalizer.normalize(tweet.getText(), Normalizer.Form.NFD); 
-			
-			String normalizedTweet = (String)pattern.matcher(nfdNormalizedString.toLowerCase()).replaceAll("");
-			// Also remove prefixed with rt
-			if (!normalizedTweet.startsWith("rt")) {
-				collector.emit(new Values(tweet, normalizedTweet, tweet.getLang()));
-			}
-		} catch (TwitterException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		String normalizedTweet = (String)pattern.matcher(nfdNormalizedString.toLowerCase()).replaceAll("");
+		// Also remove prefixed with rt
+		if (!normalizedTweet.startsWith("rt")) {
+			collector.emit(new Values(tweet, normalizedTweet, tweet.getLang()));
 		}
   }
 

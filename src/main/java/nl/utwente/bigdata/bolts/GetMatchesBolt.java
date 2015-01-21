@@ -55,12 +55,7 @@ public class GetMatchesBolt extends BaseRichBolt {
 	public void execute(Tuple input) {
 		Status status = null;
 		
-		try {
-			status =  TwitterObjectFactory.createStatus(input.getStringByField("tweet"));
-		} catch (TwitterException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
+		status =  (Status) input.getValueByField("tweet");
 		
 		//Date match = matchesMap.firstKey();
 //		if (this.matchesMap != null) {
@@ -70,7 +65,7 @@ public class GetMatchesBolt extends BaseRichBolt {
 		Pair<String, String> match = this.matchesMap.get(this.matchesMap.lowerKey(status.getCreatedAt()));
 		
 		
-		this._collector.emit(new Values(input.getStringByField("tweet"), match.getLeft(), match.getRight()));
+		this._collector.emit(new Values(status, match.getLeft(), match.getRight()));
 	}
 
 	@Override
