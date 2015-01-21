@@ -47,6 +47,8 @@ public class FileOutputBolt extends BaseBasicBolt {
 	@Override
 	public void execute(Tuple tuple, BasicOutputCollector collector) {
 		OutputStream fstream;
+		//final String[] fields = "tweet", "normalized_text", "sentiment", "home", "away"
+		
 		try {
 			fstream = new FileOutputStream(f, true);
 			PrintStream pw = new PrintStream(fstream);

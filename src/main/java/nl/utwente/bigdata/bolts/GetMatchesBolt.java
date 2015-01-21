@@ -56,16 +56,14 @@ public class GetMatchesBolt extends BaseRichBolt {
 		Status status = null;
 		
 		status =  (Status) input.getValueByField("tweet");
-		
-		//Date match = matchesMap.firstKey();
-//		if (this.matchesMap != null) {
-//			collector.emit(new Values(this.matchesMap.size()));
-//		}
-		logger.info(status.getCreatedAt() + "is search");
-		Pair<String, String> match = this.matchesMap.get(this.matchesMap.lowerKey(status.getCreatedAt()));
-		
-		
-		this._collector.emit(new Values(status, input.getValueByField("normalized_text"), input.getValueByField("sentiment"), match.getLeft(), match.getRight()));
+				
+		if (this.matchesMap.lowerKey(status.getCreatedAt()) != null) {
+		Pair<String, String> match = this.matchesMap.get(this.matchesMap.lowerKey(status.getCreatedAt()));	
+			this._collector.emit(new Values(status, input.getValueByField("normalized_text"), input.getValueByField("sentiment"), match.getLeft(), match.getRight()));
+		} else {
+			this._collector.emit(new Values(status, input.getValueByField("normalized_text"), input.getValueByField("sentiment"), "PRE_GAME", "PRE_GAME"));
+
+		}
 	}
 
 	@Override

@@ -56,11 +56,12 @@ public class PrinterSentiment extends BaseBasicBolt {
 	  } else {
 		  icon = ":-)";
 	  }
-	  
-	String tweetText = ((Status)tuple.getValueByField("tweet")).getText().replace("\n", "").replace("\r",  "");
+	Status tweet = (Status)tuple.getValueByField("tweet");
+	String tweetText = tweet.getText().replace("\n", "").replace("\r",  "");
     System.out.println(Emoji.replaceFlagInText(this.language) 
     		+ " " +Emoji.replaceInText(icon) + " " 
-    		+ "MATCH: " + tuple.getValueByField("home") + "-" + tuple.getValueByField("away")
+    		+ "DATE: " + tweet.getCreatedAt().toGMTString() + " "
+    		+ "MATCH: " + tuple.getValueByField("home") + "-" + tuple.getValueByField("away") + " - "
     		+ tweetText + " " + tuple.getValueByField("sentiment"));
   }
 

@@ -73,13 +73,11 @@ public class GetRefereeTweetsBolt extends BaseRichBolt {
 
 	@Override
 	public void execute(Tuple input) {
-		Status tweet = (Status) input.getValueByField("tweet");
-
 		String normalized_text = ((String) input.getStringByField("normalized_text")).toLowerCase();
 		//logger.info(tweet);
-			for (int i = 0; i < this.refereesTokenized.size(); i++) {
-				if (normalized_text.contains(this.refereesTokenized.get(i))) {
-					this._collector.emit(new Values(tweet, normalized_text, this.refereesTokenized.get(i)));
+			for (String tokenized : this.refereesTokenized) {
+				if (normalized_text.contains(tokenized)) {
+					this._collector.emit(new Values((Status) input.getValueByField("tweet"), normalized_text, tokenized));
 				}
 			}
 		
@@ -100,7 +98,6 @@ public class GetRefereeTweetsBolt extends BaseRichBolt {
 			while ((line = reader.readLine()) != null)
 				sb.append(line);
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		JSONParser parser = new JSONParser();
@@ -108,7 +105,6 @@ public class GetRefereeTweetsBolt extends BaseRichBolt {
 		try {
 			collection = (JSONArray) parser.parse(sb.toString());
 		} catch (ParseException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
 		
@@ -126,7 +122,6 @@ public class GetRefereeTweetsBolt extends BaseRichBolt {
 			}
 		} catch (final IOException e) {
 			e.printStackTrace();
-			//Should not occur. If it occurs, we cant continue. So, exiting at this point itself.
 			System.exit(1);
 		}
 
@@ -144,10 +139,10 @@ public class GetRefereeTweetsBolt extends BaseRichBolt {
 				String home_name = (String) home.get("name");
 				String away_name = (String) away.get("name");
 
-				SimpleDateFormat formatter = new SimpleDateFormat(
-						"dd MMM yyyy - k:mm");
-				Date matchTime = new Date();
-				matchTime = formatter.parse((String) game.get("time"));
+//				SimpleDateFormat formatter = new SimpleDateFormat(
+//						"dd MMM yyyy - k:mm");
+//				Date matchTime = new Date();
+//				matchTime = formatter.parse((String) game.get("time"));
 				Iterator i = officials.iterator();
 
 				while (i.hasNext()) {
@@ -169,7 +164,6 @@ public class GetRefereeTweetsBolt extends BaseRichBolt {
 			    	}
 			    //}
 			} catch (ClassCastException e) {
-				System.out.println("ClassCass");
 				e.printStackTrace();
 				return; // do nothing (we might log this)
 			} catch (Exception e) {
@@ -179,7 +173,6 @@ public class GetRefereeTweetsBolt extends BaseRichBolt {
 		try {
 			reader.close();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		
