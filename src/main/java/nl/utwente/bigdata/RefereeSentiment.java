@@ -54,7 +54,7 @@ import backtype.storm.tuple.Fields;
  * @package Assignment7 
  */
 public class RefereeSentiment extends AbstractTopologyRunner {   
-	final String[] languages = new String[]{ "fr", "es", "it", "de", "nl"};
+	final String[] languages = new String[]{ "fr", "it", "de", "nl"};
 	public static final Logger logger = Logger.getLogger(RefereeSentiment.class);  
 	
 	@Override

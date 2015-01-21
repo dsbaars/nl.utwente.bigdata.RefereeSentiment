@@ -1,6 +1,7 @@
-/Users/dsbaars/src/assignment-7/src/test/java/nl/utwente/bigdata/NormalizeTweetsBoltTest.java
 /Users/dsbaars/src/assignment-7/src/test/java/nl/utwente/bigdata/WorldCupJsonToDataBoltTest.java
+/Users/dsbaars/src/assignment-7/src/test/java/nl/utwente/bigdata/NormalizeTweetsBoltTest.java
 /Users/dsbaars/src/assignment-7/src/test/java/nl/utwente/bigdata/GetRefereeTweetsBoltTest.java
 /Users/dsbaars/src/assignment-7/src/test/java/nl/utwente/bigdata/Collector.java
+/Users/dsbaars/src/assignment-7/src/test/java/nl/utwente/bigdata/GetMatchesBoltTest.java
 /Users/dsbaars/src/assignment-7/src/test/java/nl/utwente/bigdata/TokenizeTweetsBoltTest.java
 /Users/dsbaars/src/assignment-7/src/test/java/nl/utwente/bigdata/TokenizeRefereesBoltTest.java

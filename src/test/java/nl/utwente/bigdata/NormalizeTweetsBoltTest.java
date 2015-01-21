@@ -51,10 +51,12 @@ public class NormalizeTweetsBoltTest {
 	public void testNormalizer() {
 		bolt = new NormalizerBolt();		
         bolt.prepare(config, context);
-		String testTweet = "Referee #haïmoudi....what a joke...what a joke...even @FIFAWorldCup @FIFAcom doesn't take 3rd place matches serious #BRANET #WorldCup;";
+		String testTweet = "{ \"text\": \"Referee #haïmoudi....what a joke...what a joke...even @FIFAWorldCup @FIFAcom doesn't take 3rd place matches serious #BRANET #WorldCup;\", \"lang\": \"nl\" }";
 		String expectedNormalizedString = "referee #haimoudi....what a joke...what a joke...even @fifaworldcup @fifacom doesn't take 3rd place matches serious #branet #worldcup;";
 		bolt.execute(generateTestTuple(testTweet), collector);
-		assertEquals(new Values(new Values(expectedNormalizedString, "nl", "")), col.output);
+	//	assertEquals(new Values(new Values(expectedNormalizedString, "nl")), col.output);
+		assertEquals(col.output.get(0).get(1), expectedNormalizedString);
+		assertEquals(col.output.get(0).get(2), "nl");
 	}
 	
 	@SuppressWarnings("rawtypes")
@@ -63,9 +65,9 @@ public class NormalizeTweetsBoltTest {
         GeneralTopologyContext topologyContext = new GeneralTopologyContext(builder.createTopology(), new Config(), new HashMap(), new HashMap(), new HashMap(), "") {
             @Override
             public Fields getComponentOutputFields(String componentId, String streamId) {
-                return new Fields("words", "lang", "createdAt");
+                return new Fields("tweet");
             }
         };
-        return new TupleImpl(topologyContext, new Values(message, "nl", ""), 1, "");
+        return new TupleImpl(topologyContext, new Values(message), 1, "");
     }
 }

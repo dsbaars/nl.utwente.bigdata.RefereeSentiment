@@ -47,10 +47,12 @@ public class CalculateSentimentBolt extends BaseRichBolt {
 
 	@Override
 	public void execute(Tuple input) {
-		final String tweet = ((String) input.getValue(0)).toLowerCase();
-		final int sentimentCurrentTweet = calculateSentiment(tweet);
+		String tweet = input.getStringByField("tweet");
+		String normalized_text = ((String) input.getStringByField("normalized_text")).toLowerCase();
 		
-		this._collector.emit(new Values(tweet, sentimentCurrentTweet));
+		final int sentimentCurrentTweet = calculateSentiment(normalized_text);
+		
+		this._collector.emit(new Values(tweet, normalized_text, sentimentCurrentTweet));
 	}
 
 	@Override
@@ -84,7 +86,7 @@ public class CalculateSentimentBolt extends BaseRichBolt {
 
 	@Override
 	public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {
-		outputFieldsDeclarer.declare(new Fields("tweet", "sentiment"));
+		outputFieldsDeclarer.declare(new Fields("tweet", "normalized_text", "sentiment"));
 	}
 
 	/**

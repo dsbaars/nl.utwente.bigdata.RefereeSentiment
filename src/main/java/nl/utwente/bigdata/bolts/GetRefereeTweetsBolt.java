@@ -68,12 +68,14 @@ public class GetRefereeTweetsBolt extends BaseRichBolt {
 
 	@Override
 	public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {
-		outputFieldsDeclarer.declare(new Fields("tweet", "referee_name"));
+		outputFieldsDeclarer.declare(new Fields("tweet", "normalized_text", "referee_name"));
 	}
 
 	@Override
 	public void execute(Tuple input) {
-		String tweet = ((String) input.getValue(0)).toLowerCase();
+		String tweet = input.getStringByField("tweet");
+
+		String normalized_text = ((String) input.getStringByField("normalized_text")).toLowerCase();
 		//logger.info(tweet);
 			for (int i = 0; i < this.refereesTokenized.size(); i++) {
 				if (tweet.contains(this.refereesTokenized.get(i))) {
@@ -161,7 +163,7 @@ public class GetRefereeTweetsBolt extends BaseRichBolt {
 			 //   for (String token: referee_name.split("\\s+")) {
 			    	nfdNormalizedString = Normalizer.normalize(referee_name, Normalizer.Form.NFD); 
 			    	String _token = (String)pattern.matcher(nfdNormalizedString.toLowerCase()).replaceAll("");
-			    	System.out.println(_token);
+			    	//System.out.println(_token);
 			    	if (!this.refereesTokenized.contains(_token)) {
 			    		this.refereesTokenized.add(_token);
 			    	}

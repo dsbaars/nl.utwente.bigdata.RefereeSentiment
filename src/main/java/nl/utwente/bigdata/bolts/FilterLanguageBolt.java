@@ -66,7 +66,7 @@ public class FilterLanguageBolt extends BaseBasicBolt {
   @Override
   public void declareOutputFields(OutputFieldsDeclarer declarer) {
 	  for (String lang: this.languages) {
-		  declarer.declareStream(lang, new Fields("words", "lang", "createdAt"));
+		  declarer.declareStream(lang, new Fields("tweet", "normalized_text"));
 	  }
   }
 

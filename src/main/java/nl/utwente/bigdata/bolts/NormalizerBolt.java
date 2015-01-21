@@ -21,6 +21,12 @@ import java.text.Normalizer;
 import java.util.Map;
 import java.util.regex.Pattern;
 
+import org.json.simple.parser.JSONParser;
+import org.json.simple.parser.ParseException;
+
+import twitter4j.Status;
+import twitter4j.TwitterException;
+import twitter4j.TwitterObjectFactory;
 import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.BasicOutputCollector;
 import backtype.storm.topology.OutputFieldsDeclarer;
@@ -34,33 +40,39 @@ public class NormalizerBolt extends BaseBasicBolt {
 
 	private static final long serialVersionUID = -8526320899331924698L;
 	private String field;
+	private JSONParser parser;
 
   @Override
   public void prepare(Map stormConf, TopologyContext context) {
-	  this.field = "words";
+	  //this.field = "words";
+	  this.parser = new JSONParser();
   }
   
   @Override
   public void execute(Tuple tuple, BasicOutputCollector collector) {
-		String val = tuple.getStringByField(this.field);
-		String lang = tuple.getStringByField("lang");
-		String createdAt = tuple.getStringByField("createdAt");
+	  	Status tweet;
+		try {
+			tweet = TwitterObjectFactory.createStatus(tuple.getStringByField("tweet"));
 		
-		// from: http://stackoverflow.com/questions/1008802/converting-symbols-accent-letters-to-english-alphabet
-	    Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
-	    String nfdNormalizedString = "";	
-		nfdNormalizedString = Normalizer.normalize(val, Normalizer.Form.NFD); 
-		
-		String normalizedTweet = (String)pattern.matcher(nfdNormalizedString.toLowerCase()).replaceAll("");
-		// Also remove prefixed with rt
-		if (!normalizedTweet.startsWith("rt")) {
-			collector.emit(new Values(normalizedTweet, lang, createdAt));
+			// from: http://stackoverflow.com/questions/1008802/converting-symbols-accent-letters-to-english-alphabet
+		    Pattern pattern = Pattern.compile("\\p{InCombiningDiacriticalMarks}+");
+		    String nfdNormalizedString = "";	
+			nfdNormalizedString = Normalizer.normalize(tweet.getText(), Normalizer.Form.NFD); 
+			
+			String normalizedTweet = (String)pattern.matcher(nfdNormalizedString.toLowerCase()).replaceAll("");
+			// Also remove prefixed with rt
+			if (!normalizedTweet.startsWith("rt")) {
+				collector.emit(new Values(tweet, normalizedTweet, tweet.getLang()));
+			}
+		} catch (TwitterException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
 		}
   }
 
   @Override
   public void declareOutputFields(OutputFieldsDeclarer declarer) {
-	  declarer.declare(new Fields("words", "lang", "createdAt"));
+	  declarer.declare(new Fields("tweet", "normalized_text", "lang"));
   }
 
 }

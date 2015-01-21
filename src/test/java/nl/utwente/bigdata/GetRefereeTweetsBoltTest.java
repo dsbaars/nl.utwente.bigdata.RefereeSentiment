@@ -76,10 +76,10 @@ public class GetRefereeTweetsBoltTest {
         GeneralTopologyContext topologyContext = new GeneralTopologyContext(builder.createTopology(), new Config(), new HashMap(), new HashMap(), new HashMap(), "") {
             @Override
             public Fields getComponentOutputFields(String componentId, String streamId) {
-                return new Fields("tweet");
+                return new Fields("tweet", "normalized_text", "lang");
             }
         };
-        return new TupleImpl(topologyContext, new Values(tweet), 1, "");
+        return new TupleImpl(topologyContext, new Values(tweet, tweet, "en"), 1, "");
     }
 	
 }

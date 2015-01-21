@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.json.simple.parser.JSONParser;
 
+import twitter4j.Status;
 import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.BasicOutputCollector;
 import backtype.storm.topology.OutputFieldsDeclarer;
@@ -41,13 +42,13 @@ public class TweetJsonToTextBolt extends BaseBasicBolt {
   @Override
   public void execute(Tuple tuple, BasicOutputCollector collector) {
 	  try {
-        Map<String, Object> tweet = (Map<String, Object>) parser.parse(tuple.getString(0));
-        String text = (String) tweet.get("text");
-        String lang = (String) tweet.get("lang");
-        String createdAt = (String) tweet.get("created_at");
+        Status tweet = (Status) parser.parse(tuple.getString(0));
+//        String text = (String) tweet.get("text");
+//        String lang = (String) tweet.get("lang");
+//        String createdAt = (String) tweet.get("created_at");
         
-        if (!(Boolean)tweet.get("retweeted")) {
-        	collector.emit(new Values(text, lang, createdAt));
+        if (!tweet.isRetweet()) {
+        	collector.emit(new Values(tweet));
         }
       }
       catch (ClassCastException e) {  
@@ -66,7 +67,7 @@ public class TweetJsonToTextBolt extends BaseBasicBolt {
 
   @Override
   public void declareOutputFields(OutputFieldsDeclarer declarer) {
-	  declarer.declare(new Fields("words", "lang", "createdAt"));
+	  declarer.declare(new Fields("tweet"));
   }
 
 }
