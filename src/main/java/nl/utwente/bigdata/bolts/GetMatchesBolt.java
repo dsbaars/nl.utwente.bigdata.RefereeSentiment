@@ -108,7 +108,7 @@ public class GetMatchesBolt extends BaseRichBolt {
 				DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 				DateTime matchTime = new DateTime();
 				matchTime = dtf.parseDateTime((String) game.get("datetime"));
-				logger.info("Added match" + matchTime.toDate());
+			//	logger.info("Added match" + matchTime.toDate());
 				this.matchesMap.put(matchTime.toDate(), Pair.of(home_name, away_name));
 			}
 		} catch (ClassCastException e) {

@@ -49,6 +49,7 @@ import nl.utwente.bigdata.bolts.TokenizeRefereesBolt;
 import nl.utwente.bigdata.bolts.TokenizerBolt;
 import nl.utwente.bigdata.bolts.TweetJsonToTextBolt;
 import nl.utwente.bigdata.bolts.WorldCupJsonToDataBolt;
+import nl.utwente.bigdata.spouts.TweetsHdfsSpout;
 import nl.utwente.bigdata.spouts.TweetsJsonSpout;
 import nl.utwente.bigdata.spouts.WorldcupDataJsonSpout;
 import nl.utwente.bigdata.spouts.TwitterSpout;
@@ -74,18 +75,20 @@ public class RefereeSentiment extends AbstractTopologyRunner {
 		String spoutId = "";
 		String prevId;
 		
-		SpoutConfig kafkaConf = new SpoutConfig(new ZkHosts(properties.getProperty("zkhost", "ctit048.ewi.utwente.nl:2181")),
-				  "worldcup_real", // topic to read from
-				  "/brokers", // the root path in Zookeeper for the spout to store the consumer offsets
-				  "worldcup");
+//		builder.setSpout(new HdfsSpout(), spout)
 //		
-		kafkaConf.scheme = new SchemeAsMultiScheme(new StringScheme());
-		kafkaConf.startOffsetTime = -2;
-//		kafkaConf.forceFromStart = true;
-		builder.setSpout("tweets", new KafkaSpout(kafkaConf), 1);
-		
-//		spoutId = "tweets"; 
-//		builder.setSpout(spoutId, new TweetsJsonSpout());
+//		SpoutConfig kafkaConf = new SpoutConfig(new ZkHosts(properties.getProperty("zkhost", "ctit048.ewi.utwente.nl:2181")),
+//				  "worldcup_real", // topic to read from
+//				  "/brokers", // the root path in Zookeeper for the spout to store the consumer offsets
+//				  "worldcup");
+////		
+//		kafkaConf.scheme = new SchemeAsMultiScheme(new StringScheme());
+//		kafkaConf.startOffsetTime = -2;
+////		kafkaConf.forceFromStart = true;
+//		builder.setSpout("tweets", new KafkaSpout(kafkaConf), 1);
+//		
+		spoutId = "tweets"; 
+		builder.setSpout(spoutId, new TweetsHdfsSpout());
 	
 		// Get tweet texts
 		builder.setBolt("tweetText", new TweetJsonToTextBolt())
@@ -141,10 +144,10 @@ public class RefereeSentiment extends AbstractTopologyRunner {
 			
 			
 			FileNameFormat fileNameFormat = new DefaultFileNameFormat()
-				.withPath(String.format("/user/s1017497/referee-sentiment-real-%s/", lang));
+				.withPath(String.format("/user/djuri/s1017497-referee-sentiment-real-%s/", lang));
 			
 			HdfsBolt hdfsBolt = new HdfsBolt()
-		        .withFsUrl("hdfs://ctit048.ewi.utwente.nl:8020")
+		        .withFsUrl("hdfs://studyserver2:8020")
 		        .withFileNameFormat(fileNameFormat)
 		        .withRecordFormat(format)
 		        .withRotationPolicy(rotationPolicy)

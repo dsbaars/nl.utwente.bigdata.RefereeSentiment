@@ -45,13 +45,9 @@ public class HdfsTestToplogy extends AbstractTopologyRunner {
 	@Override
 	protected StormTopology buildTopology(Properties properties) {
 		TopologyBuilder builder = new TopologyBuilder();
+
 		
-		SpoutConfig spoutConfig = new SpoutConfig((new ZkHosts(properties.getProperty("zkhost", "bigdatavm"))), //List of Kafka brokers
-				   "worldcup",      // Kafka topic to read from
-				   "/user/alyr/worldcup", // Root path in Zookeeper for the spout to store consumer offsets
-				   "discovery");  // ID for storing consumer offsets in Zookeeper
-		
-		builder.setSpout("hdfs", new KafkaSpout(spoutConfig));        
+		builder.setSpout("hdfs", new TweetsHdfsSpout());        
        
 		
 		String boltId = "printer"; 
