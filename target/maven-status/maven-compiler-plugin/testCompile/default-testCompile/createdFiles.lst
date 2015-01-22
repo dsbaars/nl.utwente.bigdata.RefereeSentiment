@@ -1,11 +1,13 @@
 nl/utwente/bigdata/GetRefereeTweetsBoltTest$1.class
 nl/utwente/bigdata/GetRefereeTweetsBoltTest.class
+nl/utwente/bigdata/FileOutputBoltTest.class
 nl/utwente/bigdata/TokenizeRefereesBoltTest.class
 nl/utwente/bigdata/TokenizeRefereesBoltTest$1.class
-nl/utwente/bigdata/TokenizeTweetsBoltTest.class
 nl/utwente/bigdata/WorldCupJsonToDataBoltTest$1.class
+nl/utwente/bigdata/TokenizeTweetsBoltTest.class
 nl/utwente/bigdata/WorldCupJsonToDataBoltTest.class
 nl/utwente/bigdata/NormalizeTweetsBoltTest$1.class
 nl/utwente/bigdata/TokenizeTweetsBoltTest$1.class
+nl/utwente/bigdata/FileOutputBoltTest$1.class
 nl/utwente/bigdata/NormalizeTweetsBoltTest.class
 nl/utwente/bigdata/Collector.class

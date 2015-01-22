@@ -22,6 +22,15 @@ import java.util.Properties;
 
 import org.apache.log4j.Logger;
 import org.apache.storm.hdfs.bolt.HdfsBolt;
+import org.apache.storm.hdfs.bolt.format.DefaultFileNameFormat;
+import org.apache.storm.hdfs.bolt.format.DelimitedRecordFormat;
+import org.apache.storm.hdfs.bolt.format.FileNameFormat;
+import org.apache.storm.hdfs.bolt.format.RecordFormat;
+import org.apache.storm.hdfs.bolt.rotation.FileRotationPolicy;
+import org.apache.storm.hdfs.bolt.rotation.FileSizeRotationPolicy;
+import org.apache.storm.hdfs.bolt.rotation.FileSizeRotationPolicy.Units;
+import org.apache.storm.hdfs.bolt.sync.CountSyncPolicy;
+import org.apache.storm.hdfs.bolt.sync.SyncPolicy;
 
 import storm.kafka.KafkaSpout;
 import storm.kafka.SpoutConfig;
@@ -65,15 +74,18 @@ public class RefereeSentiment extends AbstractTopologyRunner {
 		String spoutId = "";
 		String prevId;
 		
-		SpoutConfig kafkaConf = new SpoutConfig(new ZkHosts(properties.getProperty("zkhost", "130.89.171.23:2181")),
-				  "worldcup", // topic to read from
-				  "/brokers", // the root path in Zookeeper for the spout to store the consumer offsets
-				  "worldcup");
+//		SpoutConfig kafkaConf = new SpoutConfig(new ZkHosts(properties.getProperty("zkhost", "130.89.171.23:2181")),
+//				  "worldcup", // topic to read from
+//				  "/brokers", // the root path in Zookeeper for the spout to store the consumer offsets
+//				  "worldcup");
+//		
+//		kafkaConf.scheme = new SchemeAsMultiScheme(new StringScheme());
+////		kafkaConf.startOffsetTime = -2;
+////		kafkaConf.forceFromStart = true;
+//		builder.setSpout("tweets", new KafkaSpout(kafkaConf), 1);
 		
-		kafkaConf.scheme = new SchemeAsMultiScheme(new StringScheme());
-//		kafkaConf.startOffsetTime = -2;
-//		kafkaConf.forceFromStart = true;
-		builder.setSpout("tweets", new KafkaSpout(kafkaConf), 1);
+		spoutId = "tweets"; 
+		builder.setSpout(spoutId, new TweetsJsonSpout());
 	
 		// Get tweet texts
 		builder.setBolt("tweetText", new TweetJsonToTextBolt())
@@ -91,6 +103,11 @@ public class RefereeSentiment extends AbstractTopologyRunner {
 		final String getMatchesBoltName = "%s_matches";
 		final String printerBoltName = "%s_printer";
 		final String fileOutputBoltName = "%s_file_output";
+		
+		SyncPolicy syncPolicy = new CountSyncPolicy(1000);
+		FileRotationPolicy rotationPolicy = new FileSizeRotationPolicy(5.0f, Units.MB);
+		RecordFormat format = new DelimitedRecordFormat()
+			.withFieldDelimiter("|");
 		
 		for (String lang: this.languages) {
 			Config conf = new Config();
@@ -121,6 +138,21 @@ public class RefereeSentiment extends AbstractTopologyRunner {
 			builder.setBolt(String.format(fileOutputBoltName, lang), new FileOutputBolt())
 				.shuffleGrouping(String.format(getMatchesBoltName, lang))
 			; 
+			
+			
+//			FileNameFormat fileNameFormat = new DefaultFileNameFormat()
+//				.withPath(String.format("/referee-sentiment-%s/", lang));
+//			
+//			HdfsBolt hdfsBolt = new HdfsBolt()
+//		        .withFsUrl("hdfs://130.89.171.23:50070")
+//		        .withFileNameFormat(fileNameFormat)
+//		        .withRecordFormat(format)
+//		        .withRotationPolicy(rotationPolicy)
+//		        .withSyncPolicy(syncPolicy);
+//			builder.setBolt(String.format(fileOutputBoltName, lang), hdfsBolt)
+//				.shuffleGrouping(String.format(getMatchesBoltName, lang))
+//			; 
+			
 		}
 				
 		StormTopology topology = builder.createTopology();
