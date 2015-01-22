@@ -26,7 +26,9 @@ import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.BasicOutputCollector;
 import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseBasicBolt;
+import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
+import backtype.storm.tuple.Values;
 
 
 public class PrinterSentiment extends BaseBasicBolt {
@@ -63,10 +65,13 @@ public class PrinterSentiment extends BaseBasicBolt {
     		+ "DATE: " + tweet.getCreatedAt().toGMTString() + " "
     		+ "MATCH: " + tuple.getValueByField("home") + "-" + tuple.getValueByField("away") + " - "
     		+ tweetText + " " + tuple.getValueByField("sentiment"));
+    
+    collector.emit(new Values(this.language, tweetText, tweet.getCreatedAt().toGMTString(), tuple.getStringByField("home"), tuple.getValueByField("away"), tuple.getValueByField("sentiment")));
   }
 
   @Override
   public void declareOutputFields(OutputFieldsDeclarer ofd) {
+	  ofd.declare(new Fields("language", "normalized_text", "created_at", "home",  "away", "sentiment"));
   }
 
 }

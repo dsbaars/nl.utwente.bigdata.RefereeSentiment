@@ -74,18 +74,18 @@ public class RefereeSentiment extends AbstractTopologyRunner {
 		String spoutId = "";
 		String prevId;
 		
-//		SpoutConfig kafkaConf = new SpoutConfig(new ZkHosts(properties.getProperty("zkhost", "130.89.171.23:2181")),
-//				  "worldcup", // topic to read from
-//				  "/brokers", // the root path in Zookeeper for the spout to store the consumer offsets
-//				  "worldcup");
+		SpoutConfig kafkaConf = new SpoutConfig(new ZkHosts(properties.getProperty("zkhost", "ctit048.ewi.utwente.nl:2181")),
+				  "worldcup_real", // topic to read from
+				  "/brokers", // the root path in Zookeeper for the spout to store the consumer offsets
+				  "worldcup");
 //		
-//		kafkaConf.scheme = new SchemeAsMultiScheme(new StringScheme());
-////		kafkaConf.startOffsetTime = -2;
-////		kafkaConf.forceFromStart = true;
-//		builder.setSpout("tweets", new KafkaSpout(kafkaConf), 1);
+		kafkaConf.scheme = new SchemeAsMultiScheme(new StringScheme());
+		kafkaConf.startOffsetTime = -2;
+//		kafkaConf.forceFromStart = true;
+		builder.setSpout("tweets", new KafkaSpout(kafkaConf), 1);
 		
-		spoutId = "tweets"; 
-		builder.setSpout(spoutId, new TweetsJsonSpout());
+//		spoutId = "tweets"; 
+//		builder.setSpout(spoutId, new TweetsJsonSpout());
 	
 		// Get tweet texts
 		builder.setBolt("tweetText", new TweetJsonToTextBolt())
@@ -104,10 +104,10 @@ public class RefereeSentiment extends AbstractTopologyRunner {
 		final String printerBoltName = "%s_printer";
 		final String fileOutputBoltName = "%s_file_output";
 		
-		SyncPolicy syncPolicy = new CountSyncPolicy(1000);
+		SyncPolicy syncPolicy = new CountSyncPolicy(1);
 		FileRotationPolicy rotationPolicy = new FileSizeRotationPolicy(5.0f, Units.MB);
 		RecordFormat format = new DelimitedRecordFormat()
-			.withFieldDelimiter("|");
+			.withFieldDelimiter(";");
 		
 		for (String lang: this.languages) {
 			Config conf = new Config();
@@ -135,23 +135,23 @@ public class RefereeSentiment extends AbstractTopologyRunner {
 			; 
 			
 			// Each language gets a printer ...for now
-			builder.setBolt(String.format(fileOutputBoltName, lang), new FileOutputBolt(conf))
-				.shuffleGrouping(String.format(getMatchesBoltName, lang))
-			; 
-			
-			
-//			FileNameFormat fileNameFormat = new DefaultFileNameFormat()
-//				.withPath(String.format("/referee-sentiment-%s/", lang));
-//			
-//			HdfsBolt hdfsBolt = new HdfsBolt()
-//		        .withFsUrl("hdfs://130.89.171.23:50070")
-//		        .withFileNameFormat(fileNameFormat)
-//		        .withRecordFormat(format)
-//		        .withRotationPolicy(rotationPolicy)
-//		        .withSyncPolicy(syncPolicy);
-//			builder.setBolt(String.format(fileOutputBoltName, lang), hdfsBolt)
+//			builder.setBolt(String.format(fileOutputBoltName, lang), new FileOutputBolt(conf))
 //				.shuffleGrouping(String.format(getMatchesBoltName, lang))
 //			; 
+			
+			
+			FileNameFormat fileNameFormat = new DefaultFileNameFormat()
+				.withPath(String.format("/user/s1017497/referee-sentiment-real-%s/", lang));
+			
+			HdfsBolt hdfsBolt = new HdfsBolt()
+		        .withFsUrl("hdfs://ctit048.ewi.utwente.nl:8020")
+		        .withFileNameFormat(fileNameFormat)
+		        .withRecordFormat(format)
+		        .withRotationPolicy(rotationPolicy)
+		        .withSyncPolicy(syncPolicy);
+			builder.setBolt(String.format(fileOutputBoltName, lang), hdfsBolt)
+				.shuffleGrouping(String.format(printerBoltName, lang))
+			; 
 			
 		}
 				
