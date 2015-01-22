@@ -31,6 +31,7 @@ import java.io.PrintWriter;
 import org.apache.log4j.Logger;
 
 import twitter4j.Status;
+import backtype.storm.Config;
 import backtype.storm.topology.BasicOutputCollector;
 import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseBasicBolt;
@@ -44,11 +45,20 @@ public class FileOutputBolt extends BaseBasicBolt {
 	private PrintWriter pw;
 	private BufferedWriter writer;
 	public static final Logger logger = Logger.getLogger(FileOutputBolt.class);  
+	private String language;
+	
+	public FileOutputBolt(Config conf) {
+		this.language = (String) conf.get("language");
+	}
 
+	public FileOutputBolt(String string) {
+		this.language = string;
+	}
+	
 	@Override
 	public void prepare(java.util.Map stormConf, backtype.storm.task.TopologyContext context) {
 		try {			
-			this.writer = new BufferedWriter(new FileWriter("/tmp/bigdata.csv"));
+			this.writer = new BufferedWriter(new FileWriter("/tmp/bigdata_"+ this.language + ".csv"));
 			this.pw = new PrintWriter(this.writer);
 		//	logger.info("Wrote to " + this.f.getAbsolutePath());
 		} catch (IOException e) {

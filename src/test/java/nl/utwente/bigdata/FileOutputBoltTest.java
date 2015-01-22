@@ -48,7 +48,7 @@ public class FileOutputBoltTest {
 	// prepare bolt and output
 	@Before
 	public void before() {
-		bolt = new FileOutputBolt();
+		bolt = new FileOutputBolt("en");
 		col = new Collector();
 		output = new OutputCollector(col);
 		collector = new BasicOutputCollector(output);
@@ -63,7 +63,7 @@ public class FileOutputBoltTest {
 		
 		// the year minus 1900
 		//Date expectedMatchTime = new Date(114, 6, 8, 17, 0);
-		bolt = new FileOutputBolt();
+		bolt = new FileOutputBolt("en");
 		bolt.prepare(config, context);
 	    bolt.execute(generateTestTuple(TwitterObjectFactory.createStatus(tweetJson)), collector);
 	}

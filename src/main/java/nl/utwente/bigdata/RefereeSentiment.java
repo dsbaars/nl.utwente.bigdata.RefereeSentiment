@@ -135,7 +135,7 @@ public class RefereeSentiment extends AbstractTopologyRunner {
 			; 
 			
 			// Each language gets a printer ...for now
-			builder.setBolt(String.format(fileOutputBoltName, lang), new FileOutputBolt())
+			builder.setBolt(String.format(fileOutputBoltName, lang), new FileOutputBolt(conf))
 				.shuffleGrouping(String.format(getMatchesBoltName, lang))
 			; 
 			
