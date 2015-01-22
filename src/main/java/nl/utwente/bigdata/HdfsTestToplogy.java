@@ -37,17 +37,22 @@ import nl.utwente.bigdata.hdfs.IOShellCommand;
 import nl.utwente.bigdata.spouts.TweetsHdfsSpout;
 import nl.utwente.bigdata.spouts.WorldcupDataJsonSpout;
 import nl.utwente.bigdata.spouts.TwitterSpout;
+import backtype.storm.Config;
 import backtype.storm.generated.StormTopology;
 import backtype.storm.topology.TopologyBuilder;
 
 public class HdfsTestToplogy extends AbstractTopologyRunner {   
-
+	private Config conf;
+	
+	
 	@Override
 	protected StormTopology buildTopology(Properties properties) {
 		TopologyBuilder builder = new TopologyBuilder();
-
 		
-		builder.setSpout("hdfs", new TweetsHdfsSpout());        
+		conf = new Config();	
+		conf.put("path", "hdfs://127.0.0.1:8020/user/djuri/worldcup");
+		
+		builder.setSpout("hdfs", new TweetsHdfsSpout(conf));        
        
 		
 		String boltId = "printer"; 

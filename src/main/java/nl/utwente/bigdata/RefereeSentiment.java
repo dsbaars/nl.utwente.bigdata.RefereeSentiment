@@ -74,6 +74,7 @@ public class RefereeSentiment extends AbstractTopologyRunner {
 		String boltId = "";
 		String spoutId = "";
 		String prevId;
+		Config hdfsConf = new Config();
 		
 //		builder.setSpout(new HdfsSpout(), spout)
 //		
@@ -87,8 +88,10 @@ public class RefereeSentiment extends AbstractTopologyRunner {
 ////		kafkaConf.forceFromStart = true;
 //		builder.setSpout("tweets", new KafkaSpout(kafkaConf), 1);
 //		
+		hdfsConf.put("path", "hdfs://127.0.0.1:8020/user/djuri/worldcup");
+		
 		spoutId = "tweets"; 
-		builder.setSpout(spoutId, new TweetsHdfsSpout());
+		builder.setSpout(spoutId, new TweetsHdfsSpout(hdfsConf));
 	
 		// Get tweet texts
 		builder.setBolt("tweetText", new TweetJsonToTextBolt())

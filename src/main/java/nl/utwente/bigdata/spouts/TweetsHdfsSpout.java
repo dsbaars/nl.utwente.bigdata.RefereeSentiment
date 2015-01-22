@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import backtype.storm.Config;
 import backtype.storm.spout.SpoutOutputCollector;
 import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.OutputFieldsDeclarer;
@@ -33,6 +34,15 @@ public class TweetsHdfsSpout  extends BaseRichSpout {
 	private List<File> files = Lists.newLinkedList();
 	private Set<File> workingSet = new HashSet<File>();
 	private SpoutOutputCollector _collector;
+	private String path; //hdfs://127.0.0.1:8020/user/djuri/worldcup
+	
+	public TweetsHdfsSpout (Config conf) {
+		this.path = (String) conf.get(path);
+	}
+	
+	public TweetsHdfsSpout (String path) {
+		this.path = path;
+	}
 	
 	public void open(Map conf, TopologyContext context,
 			SpoutOutputCollector collector) {
@@ -45,7 +55,7 @@ public class TweetsHdfsSpout  extends BaseRichSpout {
 		 
 		try {
 			FileSystem fs = FileSystem.get(hdfsConf);
-			FileStatus[] status = fs.listStatus(new Path("hdfs://127.0.0.1:8020/user/djuri/worldcup"));
+			FileStatus[] status = fs.listStatus(new Path(path));
             this.logger.info("Opening HDFS");
 
 			for (FileStatus s: status){
