@@ -33,6 +33,7 @@ import org.apache.storm.hdfs.bolt.sync.CountSyncPolicy;
 import org.apache.storm.hdfs.bolt.sync.SyncPolicy;
 
 import nl.utwente.bigdata.bolts.CalculateSentimentBolt;
+import nl.utwente.bigdata.bolts.FileOutputBolt;
 import nl.utwente.bigdata.bolts.FilterLanguageBolt;
 import nl.utwente.bigdata.bolts.GetMatchesBolt;
 import nl.utwente.bigdata.bolts.GetRefereeTweetsBolt;
@@ -92,7 +93,7 @@ public class RefereeSentiment extends AbstractTopologyRunner {
 		final String printerBoltName = "%s_printer";
 		final String fileOutputBoltName = "%s_file_output";
 		
-		SyncPolicy syncPolicy = new CountSyncPolicy(1);
+		SyncPolicy syncPolicy = new CountSyncPolicy(1000);
 		FileRotationPolicy rotationPolicy = new FileSizeRotationPolicy(5.0f, Units.MB);
 		RecordFormat format = new DelimitedRecordFormat()
 			.withFieldDelimiter(";");
@@ -123,23 +124,23 @@ public class RefereeSentiment extends AbstractTopologyRunner {
 			; 
 			
 			// Each language gets a printer ...for now
-//			builder.setBolt(String.format(fileOutputBoltName, lang), new FileOutputBolt(conf))
-//				.shuffleGrouping(String.format(getMatchesBoltName, lang))
-//			; 
-			
-			
-			FileNameFormat fileNameFormat = new DefaultFileNameFormat()
-				.withPath(String.format("/user/djuri/s1017497-referee-sentiment-real-%s/", lang));
-			
-			HdfsBolt hdfsBolt = new HdfsBolt()
-		        .withFsUrl("hdfs://studyserver2:8020")
-		        .withFileNameFormat(fileNameFormat)
-		        .withRecordFormat(format)
-		        .withRotationPolicy(rotationPolicy)
-		        .withSyncPolicy(syncPolicy);
-			builder.setBolt(String.format(fileOutputBoltName, lang), hdfsBolt)
-				.shuffleGrouping(String.format(printerBoltName, lang))
+			builder.setBolt(String.format(fileOutputBoltName, lang), new FileOutputBolt(conf))
+				.shuffleGrouping(String.format(getMatchesBoltName, lang))
 			; 
+			
+			
+//			FileNameFormat fileNameFormat = new DefaultFileNameFormat()
+//				.withPath(String.format("/user/djuri/s1017497-referee-sentiment-real-%s/", lang));
+//			
+//			HdfsBolt hdfsBolt = new HdfsBolt()
+//		        .withFsUrl("hdfs://studyserver2:8020")
+//		        .withFileNameFormat(fileNameFormat)
+//		        .withRecordFormat(format)
+//		        .withRotationPolicy(rotationPolicy)
+//		        .withSyncPolicy(syncPolicy);
+//			builder.setBolt(String.format(fileOutputBoltName, lang), hdfsBolt)
+//				.shuffleGrouping(String.format(printerBoltName, lang))
+//			; 
 			
 		}
 				
