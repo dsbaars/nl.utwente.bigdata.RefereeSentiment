@@ -57,10 +57,8 @@ public class HdfsOutputBolt extends BaseBasicBolt {
 			fstream.close();
 			System.out.println("Wrote to " + f.getAbsolutePath());
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		

@@ -3,9 +3,13 @@ package nl.utwente.bigdata.bolts;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
+import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -18,7 +22,11 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
+import com.google.common.collect.Maps;
+
 import twitter4j.Status;
+import twitter4j.TwitterException;
+import twitter4j.TwitterObjectFactory;
 import backtype.storm.task.OutputCollector;
 import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.OutputFieldsDeclarer;
@@ -62,10 +70,10 @@ public class GetMatchesBolt extends BaseRichBolt {
 	public void prepare(Map map, TopologyContext topologyContext,
 			OutputCollector collector) {
 		this.matchesMap = new TreeMap<Date, Pair<String,String>>();;
-		this._collector = collector;
+		this._collector = collector;	
 		this.readMatchDates();
 	}
-
+	
 	@Override
 	public void declareOutputFields(OutputFieldsDeclarer outputFieldsDeclarer) {
 		outputFieldsDeclarer.declare(new Fields("tweet", "normalized_text", "sentiment", "home", "away"));
@@ -95,12 +103,11 @@ public class GetMatchesBolt extends BaseRichBolt {
 	
 				String home_name = (String) home.get("country");
 				String away_name = (String) away.get("country");
-				// 2014-06-22T13:00:00.000-03:00
-				// 2015-01-20T22:18:10.866-0300
+
 				DateTimeFormatter dtf = DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZ");
 				DateTime matchTime = new DateTime();
 				matchTime = dtf.parseDateTime((String) game.get("datetime"));
-			//	logger.info("Added match" + matchTime.toDate());
+				logger.info("Added match" + matchTime.toDate());
 				this.matchesMap.put(matchTime.toDate(), Pair.of(home_name, away_name));
 			}
 		} catch (ClassCastException e) {

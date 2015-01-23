@@ -16,42 +16,41 @@
  * limitations under the License.
  */
 
-package nl.utwente.bigdata;
+package nl.utwente.bigdata.topology;
 
 import java.util.Properties;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import nl.utwente.bigdata.bolts.NormalizerBolt;
 import nl.utwente.bigdata.bolts.PrinterBolt;
-import nl.utwente.bigdata.spouts.TweetsHdfsSpout;
-import backtype.storm.Config;
+import nl.utwente.bigdata.bolts.TokenizerBolt;
+import nl.utwente.bigdata.bolts.TweetJsonToTextBolt;
+import nl.utwente.bigdata.spouts.TwitterSpout;
 import backtype.storm.generated.StormTopology;
 import backtype.storm.topology.TopologyBuilder;
 
-public class HdfsTestToplogy extends AbstractTopologyRunner {   
-	private Config conf;
-	private static Logger logger = LoggerFactory.getLogger(HdfsTestToplogy.class);
-
+public class PrintTwitterTopology extends AbstractTopologyRunner {   
 	
 	@Override
 	protected StormTopology buildTopology(Properties properties) {
 		TopologyBuilder builder = new TopologyBuilder();
-		logger.info("HDFS TEST", properties.getProperty("worldcup-path"));
+        
+		String boltId = "";
+		String prevId;
 		
+		boltId = "spout"; 
+		builder.setSpout(boltId, new TwitterSpout(properties)); 
+		prevId = boltId;
 		
-		conf = new Config();	
-		conf.put("path", properties.getProperty("worldcup-path", "hdfs://127.0.0.1:8020/user/djuri/worldcup"));
-		conf.put("hdfsConf", properties.getProperty("hdfs-xml-config", "/etc/hadoop/conf/core-site.xml"));
+		boltId = "textify"; 
+		builder.setBolt(boltId, new TweetJsonToTextBolt()).shuffleGrouping(prevId); 
+		prevId = boltId;
 		
-		builder.setSpout("hdfs", new TweetsHdfsSpout(conf));        
-       
-		builder.setBolt("normalizedTweets", new NormalizerBolt())
-		.shuffleGrouping("hdfs"); 
+		boltId = "tokenizer"; 
+		builder.setBolt(boltId, new TokenizerBolt()).shuffleGrouping(prevId);
+		prevId = boltId;
 		
-		String boltId = "printer"; 
-		builder.setBolt(boltId, new PrinterBolt()).shuffleGrouping("normalizedTweets"); 
+		boltId = "printer"; 
+		builder.setBolt(boltId, new PrinterBolt()).shuffleGrouping(prevId); 
+		prevId = boltId;
 		
 		StormTopology topology = builder.createTopology();
 		return topology;
@@ -60,6 +59,6 @@ public class HdfsTestToplogy extends AbstractTopologyRunner {
 	
     
     public static void main(String[] args) {
-    	new HdfsTestToplogy().run(args);;
+    	new PrintTwitterTopology().run(args);;
     }
 }

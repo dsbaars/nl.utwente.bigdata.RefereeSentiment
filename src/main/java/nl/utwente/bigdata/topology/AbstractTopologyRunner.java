@@ -1,4 +1,4 @@
-package nl.utwente.bigdata;
+package nl.utwente.bigdata.topology;
 
 import java.util.Properties;
 
