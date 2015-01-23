@@ -1,31 +1,3 @@
-Assignment 7 Group 6
-====================
-
-How to prepare:
-
-1. Check-out repository
-2. Import as maven repository in eclipse
-3. RefereeSentiment class contains the Kafka spout config, change if necessary
-4. When finished, run `mvn clean package; storm jar target/group6assignment7-0.1.jar nl.utwente.bigdata.RefereeSentiment RefereeSentiment local
-
-
-Used libraries
---------------
-- twitter4j: http://twitter4j.org/en/index.html
-- AFINN: AFINN is a list of English words rated for valence with an integer
-between minus five (negative) and plus five (positive).
-- storm-hdfs
-
-References
-----------
-- Baccianella, S., Esuli, A., & Sebastiani, F. (2010). SentiWordNet 3.0: An Enhanced Lexical Resource for Sentiment Analysis and Opinion Mining. In N. C. (Conference Chair), K. Choukri, B. Maegaard, J. Mariani, J. Odijk, S. Piperidis, … D. Tapias (Eds.), Proceedings of the Seventh International Conference on Language Resources and Evaluation (LREC’10). Valletta, Malta: European Language Resources Association (ELRA).
-
-- Nielsen, F. Å. (2011). AFINN. Informatics and Mathematical Modelling, Technical University of Denmark.
-
-Pig Latin MapReduce WordNet
-----------------------------
-<!-- Yeah not really ruby but this colors it quite okay'ish -->
-```ruby
 wn_eng = LOAD 'wordnet/wn-wikt-eng.tab' USING PigStorage('\t') AS (synid_eng: chararray, type_eng:chararray, word_eng:chararray);
 wn_dut = LOAD 'wordnet/wn-wikt-nld.tab' USING PigStorage('\t') AS (synid_dut: chararray, type_dut:chararray, word_dut:chararray);
 wn_ger = LOAD 'wordnet/wn-wikt-deu.tab' USING PigStorage('\t') AS (synid_ger: chararray, type_ger:chararray, word_ger:chararray);
@@ -79,4 +51,3 @@ STORE de_cleand INTO 'senti-de.txt';
 STORE fr_cleand INTO 'senti-fr.txt';
 STORE it_cleand INTO 'senti-it.txt';
 STORE ES_cleand INTO 'senti-es.txt';
-```
