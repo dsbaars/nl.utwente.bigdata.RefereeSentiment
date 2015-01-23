@@ -1,4 +1,3 @@
-/Users/dsbaars/src/assignment-7/src/main/java/nl/utwente/bigdata/bolts/HdfsOutputBolt.java
 /Users/dsbaars/src/assignment-7/src/main/java/nl/utwente/bigdata/bolts/TweetJsonToTextBolt.java
 /Users/dsbaars/src/assignment-7/src/main/java/nl/utwente/bigdata/bolts/TokenizerBolt.java
 /Users/dsbaars/src/assignment-7/src/main/java/nl/utwente/bigdata/utils/NaturalOrderComparator.java
