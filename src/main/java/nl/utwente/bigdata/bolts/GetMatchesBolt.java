@@ -3,13 +3,9 @@ package nl.utwente.bigdata.bolts;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
-import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.apache.commons.lang3.tuple.Pair;
@@ -22,11 +18,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import com.google.common.collect.Maps;
-
 import twitter4j.Status;
-import twitter4j.TwitterException;
-import twitter4j.TwitterObjectFactory;
 import backtype.storm.task.OutputCollector;
 import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.OutputFieldsDeclarer;

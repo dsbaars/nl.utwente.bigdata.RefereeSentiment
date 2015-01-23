@@ -18,45 +18,40 @@
 
 package nl.utwente.bigdata;
 
-import java.io.File;
-import java.io.IOException;
 import java.util.Properties;
 
-import com.google.common.collect.ImmutableList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import scala.collection.immutable.List;
-import storm.kafka.BrokerHosts;
-import storm.kafka.KafkaSpout;
-import storm.kafka.SpoutConfig;
-import storm.kafka.ZkHosts;
+import nl.utwente.bigdata.bolts.NormalizerBolt;
 import nl.utwente.bigdata.bolts.PrinterBolt;
-import nl.utwente.bigdata.bolts.TokenizerBolt;
-import nl.utwente.bigdata.bolts.TweetJsonToTextBolt;
-import nl.utwente.bigdata.hdfs.FileIOCommandBolt;
-import nl.utwente.bigdata.hdfs.IOShellCommand;
 import nl.utwente.bigdata.spouts.TweetsHdfsSpout;
-import nl.utwente.bigdata.spouts.WorldcupDataJsonSpout;
-import nl.utwente.bigdata.spouts.TwitterSpout;
 import backtype.storm.Config;
 import backtype.storm.generated.StormTopology;
 import backtype.storm.topology.TopologyBuilder;
 
 public class HdfsTestToplogy extends AbstractTopologyRunner {   
 	private Config conf;
-	
+	private static Logger logger = LoggerFactory.getLogger(HdfsTestToplogy.class);
+
 	
 	@Override
 	protected StormTopology buildTopology(Properties properties) {
 		TopologyBuilder builder = new TopologyBuilder();
+		logger.info("HDFS TEST", properties.getProperty("worldcup-path"));
+		
 		
 		conf = new Config();	
-		conf.put("path", "hdfs://127.0.0.1:8020/user/djuri/worldcup");
+		conf.put("path", properties.getProperty("worldcup-path", "hdfs://127.0.0.1:8020/user/djuri/worldcup"));
+		conf.put("hdfsConf", properties.getProperty("hdfs-xml-config", "/etc/hadoop/conf/core-site.xml"));
 		
 		builder.setSpout("hdfs", new TweetsHdfsSpout(conf));        
        
+		builder.setBolt("normalizedTweets", new NormalizerBolt())
+		.shuffleGrouping("hdfs"); 
 		
 		String boltId = "printer"; 
-		builder.setBolt(boltId, new PrinterBolt()).shuffleGrouping("hdfs"); 
+		builder.setBolt(boltId, new PrinterBolt()).shuffleGrouping("normalizedTweets"); 
 		
 		StormTopology topology = builder.createTopology();
 		return topology;

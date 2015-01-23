@@ -31,10 +31,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.Properties;
 import java.util.Random;
-
-import org.yaml.snakeyaml.reader.StreamReader;
 
 public class TweetsJsonSpout extends BaseRichSpout {
   private static final long serialVersionUID = -1497360044271864620L;

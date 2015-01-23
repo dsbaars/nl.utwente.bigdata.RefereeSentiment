@@ -14,6 +14,7 @@
 /Users/dsbaars/src/assignment-7/src/main/java/nl/utwente/bigdata/spouts/WorldcupDataJsonSpout.java
 /Users/dsbaars/src/assignment-7/src/main/java/nl/utwente/bigdata/bolts/PrinterSentiment.java
 /Users/dsbaars/src/assignment-7/src/main/java/nl/utwente/bigdata/PrintKafkaTokensTopology.java
+/Users/dsbaars/src/assignment-7/src/main/java/nl/utwente/bigdata/utils/Emoji.java
 /Users/dsbaars/src/assignment-7/src/main/java/nl/utwente/bigdata/AbstractTopologyRunner.java
 /Users/dsbaars/src/assignment-7/src/main/java/nl/utwente/bigdata/bolts/LinkToGameBolt.java
 /Users/dsbaars/src/assignment-7/src/main/java/nl/utwente/bigdata/hdfs/IOShellCommand.java
@@ -22,10 +23,10 @@
 /Users/dsbaars/src/assignment-7/src/main/java/nl/utwente/bigdata/bolts/NGramerBolt.java
 /Users/dsbaars/src/assignment-7/src/main/java/nl/utwente/bigdata/bolts/PrinterBolt.java
 /Users/dsbaars/src/assignment-7/src/main/java/nl/utwente/bigdata/TupleHelpers.java
-/Users/dsbaars/src/assignment-7/src/main/java/nl/utwente/bigdata/Emoji.java
 /Users/dsbaars/src/assignment-7/src/main/java/nl/utwente/bigdata/HdfsTestToplogy.java
 /Users/dsbaars/src/assignment-7/src/main/java/nl/utwente/bigdata/spouts/TweetsHdfsSpout.java
 /Users/dsbaars/src/assignment-7/src/main/java/nl/utwente/bigdata/bolts/WorldCupJsonToDataBolt.java
 /Users/dsbaars/src/assignment-7/src/main/java/nl/utwente/bigdata/bolts/TokenizerBolt.java
+/Users/dsbaars/src/assignment-7/src/main/java/nl/utwente/bigdata/utils/NaturalOrderComparator.java
 /Users/dsbaars/src/assignment-7/src/main/java/nl/utwente/bigdata/bolts/GetRefereeTweetsBolt.java
 /Users/dsbaars/src/assignment-7/src/main/java/nl/utwente/bigdata/bolts/TokenizeRefereesBolt.java

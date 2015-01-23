@@ -22,11 +22,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
-
 import twitter4j.Status;
-import twitter4j.TwitterException;
-import twitter4j.TwitterObjectFactory;
 import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.BasicOutputCollector;
 import backtype.storm.topology.OutputFieldsDeclarer;

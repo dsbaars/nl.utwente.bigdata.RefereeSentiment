@@ -20,18 +20,11 @@ package nl.utwente.bigdata;
 
 import java.util.Properties;
 
-import storm.kafka.KafkaConfig;
 import storm.kafka.KafkaSpout;
 import storm.kafka.SpoutConfig;
 import storm.kafka.StringScheme;
 import storm.kafka.ZkHosts;
-import nl.utwente.bigdata.bolts.FileOutputBolt;
-import nl.utwente.bigdata.bolts.GetRefereeTweetsBolt;
-import nl.utwente.bigdata.bolts.NormalizerBolt;
 import nl.utwente.bigdata.bolts.PrinterBolt;
-import nl.utwente.bigdata.bolts.TokenizerBolt;
-import nl.utwente.bigdata.bolts.TweetJsonToTextBolt;
-import nl.utwente.bigdata.spouts.JsonSpout;
 import backtype.storm.generated.StormTopology;
 import backtype.storm.spout.SchemeAsMultiScheme;
 import backtype.storm.topology.TopologyBuilder;

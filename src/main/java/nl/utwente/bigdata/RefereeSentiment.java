@@ -32,32 +32,17 @@ import org.apache.storm.hdfs.bolt.rotation.FileSizeRotationPolicy.Units;
 import org.apache.storm.hdfs.bolt.sync.CountSyncPolicy;
 import org.apache.storm.hdfs.bolt.sync.SyncPolicy;
 
-import storm.kafka.KafkaSpout;
-import storm.kafka.SpoutConfig;
-import storm.kafka.StringScheme;
-import storm.kafka.ZkHosts;
 import nl.utwente.bigdata.bolts.CalculateSentimentBolt;
-import nl.utwente.bigdata.bolts.FileOutputBolt;
 import nl.utwente.bigdata.bolts.FilterLanguageBolt;
 import nl.utwente.bigdata.bolts.GetMatchesBolt;
 import nl.utwente.bigdata.bolts.GetRefereeTweetsBolt;
-import nl.utwente.bigdata.bolts.LinkToGameBolt;
 import nl.utwente.bigdata.bolts.NormalizerBolt;
-import nl.utwente.bigdata.bolts.PrinterBolt;
 import nl.utwente.bigdata.bolts.PrinterSentiment;
-import nl.utwente.bigdata.bolts.TokenizeRefereesBolt;
-import nl.utwente.bigdata.bolts.TokenizerBolt;
 import nl.utwente.bigdata.bolts.TweetJsonToTextBolt;
-import nl.utwente.bigdata.bolts.WorldCupJsonToDataBolt;
 import nl.utwente.bigdata.spouts.TweetsHdfsSpout;
-import nl.utwente.bigdata.spouts.TweetsJsonSpout;
-import nl.utwente.bigdata.spouts.WorldcupDataJsonSpout;
-import nl.utwente.bigdata.spouts.TwitterSpout;
 import backtype.storm.Config;
 import backtype.storm.generated.StormTopology;
-import backtype.storm.spout.SchemeAsMultiScheme;
 import backtype.storm.topology.TopologyBuilder;
-import backtype.storm.tuple.Fields;
 
 /**	
  * @author Djuri Baars
@@ -87,18 +72,15 @@ public class RefereeSentiment extends AbstractTopologyRunner {
 //		kafkaConf.startOffsetTime = -2;
 ////		kafkaConf.forceFromStart = true;
 //		builder.setSpout("tweets", new KafkaSpout(kafkaConf), 1);
-//		
-		hdfsConf.put("path", "hdfs://127.0.0.1:8020/user/djuri/worldcup");
+		hdfsConf.put("path", properties.getProperty("worldcup-path", "hdfs://127.0.0.1:8020/user/djuri/worldcup"));
+		hdfsConf.put("hdfsConf", properties.getProperty("hdfs-xml-config", "/etc/hadoop/conf/core-site.xml"));
 		
-		spoutId = "tweets"; 
-		builder.setSpout(spoutId, new TweetsHdfsSpout(hdfsConf));
-	
-		// Get tweet texts
-		builder.setBolt("tweetText", new TweetJsonToTextBolt())
-			.shuffleGrouping("tweets"); 	
+		builder.setSpout("tweets", new TweetsHdfsSpout(hdfsConf));        
+//		builder.setBolt("tweets", new TweetJsonToTextBolt())
+//			.shuffleGrouping("tweetsText"); 
 	
 		builder.setBolt("normalizedTweets", new NormalizerBolt())
-			.shuffleGrouping("tweetText"); 
+			.shuffleGrouping("tweets"); 
 		
 		builder.setBolt("filteredLanguages", new FilterLanguageBolt())
 			.shuffleGrouping("normalizedTweets")

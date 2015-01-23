@@ -3,12 +3,9 @@ package nl.utwente.bigdata;
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import nl.utwente.bigdata.bolts.GetRefereeTweetsBolt;
-import nl.utwente.bigdata.bolts.TokenizeRefereesBolt;
 import nl.utwente.bigdata.bolts.TokenizerBolt;
 
 import org.junit.Before;

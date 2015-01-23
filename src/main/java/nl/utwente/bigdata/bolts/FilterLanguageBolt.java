@@ -17,11 +17,8 @@
  */
 package nl.utwente.bigdata.bolts;
 
-import java.text.Normalizer;
 import java.util.Arrays;
 import java.util.Map;
-import java.util.regex.Pattern;
-
 import org.apache.log4j.Logger;
 
 import twitter4j.Status;
@@ -31,7 +28,6 @@ import backtype.storm.topology.OutputFieldsDeclarer;
 import backtype.storm.topology.base.BaseBasicBolt;
 import backtype.storm.tuple.Fields;
 import backtype.storm.tuple.Tuple;
-import backtype.storm.tuple.Values;
 
 /**
  * Split to multiple language streams

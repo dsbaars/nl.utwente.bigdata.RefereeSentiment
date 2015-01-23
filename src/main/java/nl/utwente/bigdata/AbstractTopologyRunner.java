@@ -2,15 +2,17 @@ package nl.utwente.bigdata;
 
 import java.util.Properties;
 
+import org.apache.log4j.Logger;
+
 import backtype.storm.Config;
 import backtype.storm.LocalCluster;
 import backtype.storm.StormSubmitter;
 import backtype.storm.generated.AlreadyAliveException;
 import backtype.storm.generated.InvalidTopologyException;
 import backtype.storm.generated.StormTopology;
-import backtype.storm.utils.Utils;
 
 public abstract class AbstractTopologyRunner {
+	public static final Logger logger = Logger.getLogger(AbstractTopologyRunner.class);  
 	
 	// sub-classes have to override this function
 	protected abstract StormTopology buildTopology(Properties properties);
@@ -20,6 +22,7 @@ public abstract class AbstractTopologyRunner {
         Config conf = new Config();
         for (Object key: properties.keySet()) {
         	conf.put((String)key, properties.getProperty((String) key));
+        	logger.info("Config set: " + (String)key + " to value: " + properties.getProperty((String) key));
         }
         LocalCluster cluster = new LocalCluster();        
         cluster.submitTopology(name, conf, topology);        

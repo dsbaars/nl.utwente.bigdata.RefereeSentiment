@@ -20,7 +20,7 @@ package nl.utwente.bigdata.bolts;
 import java.util.Map;
 
 import twitter4j.Status;
-import nl.utwente.bigdata.Emoji;
+import nl.utwente.bigdata.utils.Emoji;
 import backtype.storm.Config;
 import backtype.storm.task.TopologyContext;
 import backtype.storm.topology.BasicOutputCollector;
