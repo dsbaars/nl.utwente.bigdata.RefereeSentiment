@@ -1,4 +1,20 @@
-<canvas id="line" class="chart chart-line" data="data"
-  labels="labels" legend="true" series="series" height="100"
-  click="onClick">
-</canvas>
+<h3 class="no-padding">{{ match.home_team.country }} - {{ match.away_team.country }} <small>{{ match.home_team.goals }} - {{ match.away_team.goals }}</small></h3>
+<div class="row">
+    <div class="col-md-3">
+        <h4>{{ match.home_team.country }}</h4>
+        <ul>
+            <li ng-repeat="e in home_events">{{ e.time }}: {{ e.type_of_event }} by {{ e.player }}</li>
+        </ul>
+        <h4>{{ match.away_team.country }}</h4>
+        <ul>
+            <li ng-repeat="e in away_events">{{ e.time }}: {{ e.type_of_event }} by {{ e.player }}</li>
+        </ul>
+    </div>
+    <div class="col-md-9">
+        <canvas id="line" class="chart chart-line" data="data"
+          labels="labels" legend="true" series="series" height="100"
+          options="options"
+          click="onClick">
+        </canvas>
+    </div>
+</div>

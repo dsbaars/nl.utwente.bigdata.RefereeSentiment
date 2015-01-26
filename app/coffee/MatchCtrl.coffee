@@ -1,10 +1,16 @@
 angular.module("mbd.matchCtrl", ['chart.js']).controller('MatchCtrl', [
     '$scope'
     '$http'
-    ($scope, $http) ->
+    '$stateParams'
+    ($scope, $http, $stateParams) ->
         $scope.matches = []
+        $scope.events = []
         $http.get('data/worldcup-matches.json').success((data, status) ->
             $scope.matches = data
+            $scope.match = data[$stateParams.index]
+            $scope.home_events = data[$stateParams.index].home_team_events
+            $scope.away_events = data[$stateParams.index].away_team_events
+
             return
             )
 
