@@ -15,10 +15,11 @@
     <link rel="stylesheet" href="/bower_components/font-awesome/css/font-awesome.css">
     <link rel="stylesheet" href="/bower_components/angular-chart.js/dist/angular-chart.css">
     <link rel="stylesheet" href="/bower_components/c3/c3.css">
+    <link rel="stylesheet" href="/bower_components/jasny-bootstrap/dist/css/jasny-bootstrap.css">
     <link rel="stylesheet" href="/css/main.css">
     <!-- endinjector -->
     <!-- endbuild -->
-    <base href="/">    
+    <base href="/">
 </head>
 <body>
     <!--[if lt IE 7]>
@@ -27,7 +28,7 @@
     <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
         <div class="container-fluid">
             <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
+                <button type="button" class="navbar-toggle hidden-md hidden-lg" data-toggle="offcanvas" data-target="#sidebar" data-canvas="body">
                     <span class="sr-only">Toggle navigation</span>
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
@@ -37,9 +38,10 @@
             </div>
         </div>
     </div>
+
     <div class="container-fluid">
         <div class="row">
-            <div class="col-sm-3 col-md-2 sidebar" id="sidebar" ng-controller="SideBarCtrl">
+            <nav class="navmenu navmenu-default navmenu-fixed-left offcanvas-sm" role="navigation" id="sidebar" ng-controller="SideBarCtrl">
                 <ul class="nav nav-sidebar">
                     <li ui-sref-active="active"><a ui-sref="index">Overview <span class="sr-only">(current)</span></a></li>
                     <li ui-sref-active="active" ng-repeat="m in matches">
@@ -47,8 +49,8 @@
                     </li>
 
                 </ul>
-            </div>
-            <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main" ui-view>
+            </nav>
+            <div class="col-sm-12 col-md-12  main" ui-view>
 
             </div>
         </div>
@@ -67,6 +69,7 @@
     <script src="/bower_components/angular-chart.js/dist/angular-chart.js"></script>
     <script src="/bower_components/d3/d3.js"></script>
     <script src="/bower_components/c3/c3.js"></script>
+    <script src="/bower_components/jasny-bootstrap/dist/js/jasny-bootstrap.js"></script>
     <script src="/js/MatchCtrl.js"></script>
     <script src="/js/NavBarCtrl.js"></script>
     <script src="/js/SideBarCtrl.js"></script>
