@@ -3,7 +3,7 @@ angular.module("mbd.sideBarCtrl", []).controller('SideBarCtrl', [
     '$http'
     ($scope, $http) ->
         $scope.matches = []
-        $http.get('data/worldcup-matches.json').success((data, status) ->
+        $http.get('/public/data/worldcup-matches.json').success((data, status) ->
             $scope.matches = data
             return
             )

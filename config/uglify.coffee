@@ -1,4 +1,4 @@
 module.exports =
     options:
-        sourceMap: true
+        sourceMap: false
         mangle: false

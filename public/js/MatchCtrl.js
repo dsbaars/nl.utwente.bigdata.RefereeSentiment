@@ -4,7 +4,7 @@ angular.module("mbd.matchCtrl", ['chart.js']).controller('MatchCtrl', [
     $scope.matches = [];
     $scope.events = [];
     $scope.lines = [];
-    $http.get('data/worldcup-matches.json').success(function(data, status) {
+    $http.get('/public/data/worldcup-matches.json').success(function(data, status) {
       var jsonData;
       $scope.matches = data;
       $scope.match = data[$stateParams.index];

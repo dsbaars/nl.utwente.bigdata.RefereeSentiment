@@ -7,45 +7,8 @@
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <title>Referee Sentiment, Group 6 - Managing Big Data @ UT</title>
-    <meta name="description" content="">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="css/app.dist.css">
-    <base href="//dsbaars.github.io/nl.utwente.bigdata.RefereeSentiment/public/">
+    <meta http-equiv="refresh" content="0; url=http://refereesentiment.ds.baars.ml/">
 </head>
 <body>
-    <!--[if lt IE 7]>
-    <p class="browsehappy">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
-    <![endif]-->
-    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-        <div class="container-fluid">
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-collapse">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="#"><i class="fa fa fa-futbol-o"></i> Referee Sentiment <small>Group 6 - Managing Big Data @ UT</small></a>
-            </div>
-        </div>
-    </div>
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-sm-3 col-md-2 sidebar" id="sidebar" ng-controller="SideBarCtrl">
-                <ul class="nav nav-sidebar">
-                    <li ui-sref-active="active"><a ui-sref="index">Overview <span class="sr-only">(current)</span></a></li>
-                    <li ui-sref-active="active" ng-repeat="m in matches">
-                        <a ui-sref="match({index: $index })">{{ m.datetime|date:'dd-MM' }} {{ m.home_team.country }} - {{ m.away_team.country }} <span class="badge pull-right">{{ m.home_team.goals }}-{{ m.away_team.goals }}</span></a>
-                    </li>
-
-                </ul>
-            </div>
-            <div class="col-sm-9 col-sm-offset-3 col-md-10 col-md-offset-2 main" ui-view>
-
-            </div>
-        </div>
-    </div>
-
-    <script src="js/app.dist.js"></script>
 </body>
 </html>

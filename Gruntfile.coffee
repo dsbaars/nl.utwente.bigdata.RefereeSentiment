@@ -17,6 +17,10 @@ module.exports = (grunt,options) ->
 
     grunt.registerTask('build-dist', [
         'notify_hooks'
+        'clean:dist'
+        'less'
+        'coffee'
+        'copy:template'
         'injector'
         'useminPrepare'
         'concat:generated'
