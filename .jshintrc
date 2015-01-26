@@ -1,0 +1,17 @@
+{
+    /*"predef": {
+        "document": true,
+        "window": true,
+        "location": true,
+        "setTimeout": true,
+        "Ember": true,
+        "Em": true,
+        "DS": true,
+        "$": true,
+        "App" : true,
+        "bootbox" : true,
+        "moment" : true
+    },*/
+    "indent"        : 4,
+    "eqeqeq"        : true
+}
