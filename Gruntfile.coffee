@@ -17,9 +17,14 @@ module.exports = (grunt,options) ->
 
     grunt.registerTask('build-dist', [
         'notify_hooks'
+        'injector'
         'useminPrepare'
         'concat:generated'
         'cssmin:generated'
         'uglify:generated'
         'usemin'
+    ])
+    grunt.registerTask('server', [
+        'connect'
+        'watch'
     ])

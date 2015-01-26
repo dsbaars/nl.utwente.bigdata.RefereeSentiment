@@ -1,3 +1,4 @@
-module.exports = (grunt) ->
-    default:
-        paths: []
+module.exports =
+    options:
+        sourceMap: true
+        mangle: false
