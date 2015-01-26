@@ -14,7 +14,7 @@ angular.module("mbd", [
         $stateProvider
             .state('index', {
                url: "/",
-               templateUrl: "/partials/index.html"
+               templateUrl: "partials/index.html"
         })
 
         $stateProvider

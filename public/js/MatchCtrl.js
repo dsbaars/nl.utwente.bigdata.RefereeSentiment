@@ -2,7 +2,7 @@ angular.module("mbd.matchCtrl", ['chart.js']).controller('MatchCtrl', [
   '$scope', '$http', function($scope, $http) {
     var start, step;
     $scope.matches = [];
-    $http.get('/data/worldcup-matches.json').success(function(data, status) {
+    $http.get('data/worldcup-matches.json').success(function(data, status) {
       $scope.matches = data;
     });
     $scope.labels = _.range([start = 0], 100, [step = 5]);
