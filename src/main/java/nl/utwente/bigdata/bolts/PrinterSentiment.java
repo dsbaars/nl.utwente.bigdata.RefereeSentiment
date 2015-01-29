@@ -66,7 +66,7 @@ public class PrinterSentiment extends BaseBasicBolt {
     		+ "MATCH: " + tuple.getValueByField("home") + "-" + tuple.getValueByField("away") + " - "
     		+ tweetText + " " + tuple.getValueByField("sentiment"));
     
-    collector.emit(new Values(this.language, tweetText, tweet.getCreatedAt().toGMTString(), tuple.getStringByField("home"), tuple.getValueByField("away"), tuple.getValueByField("sentiment")));
+    collector.emit(new Values(this.language, tuple.getStringByField("normalized_text"), tweet.getCreatedAt().toGMTString(), tuple.getStringByField("home"), tuple.getValueByField("away"), tuple.getValueByField("sentiment")));
   }
 
   @Override

@@ -49,9 +49,9 @@ import backtype.storm.topology.TopologyBuilder;
  * @author Martijn Hensema
  * @package Assignment7 
  */
-public class RefereeSentiment extends AbstractTopologyRunner {   
+public class RefereeSentimentDnet extends AbstractTopologyRunnerNimbus {   
 	final String[] languages = new String[]{ "en", "es", "fr", "it", "de", "nl"};
-	public static final Logger logger = Logger.getLogger(RefereeSentiment.class);  
+	public static final Logger logger = Logger.getLogger(RefereeSentimentDnet.class);  
 	
 	@Override
 	protected StormTopology buildTopology(Properties properties) {
@@ -61,23 +61,10 @@ public class RefereeSentiment extends AbstractTopologyRunner {
 		String prevId;
 		Config hdfsConf = new Config();
 		
-//		builder.setSpout(new HdfsSpout(), spout)
-//		
-//		SpoutConfig kafkaConf = new SpoutConfig(new ZkHosts(properties.getProperty("zkhost", "ctit048.ewi.utwente.nl:2181")),
-//				  "worldcup_real", // topic to read from
-//				  "/brokers", // the root path in Zookeeper for the spout to store the consumer offsets
-//				  "worldcup");
-////		
-//		kafkaConf.scheme = new SchemeAsMultiScheme(new StringScheme());
-//		kafkaConf.startOffsetTime = -2;
-////		kafkaConf.forceFromStart = true;
-//		builder.setSpout("tweets", new KafkaSpout(kafkaConf), 1);
 		hdfsConf.put("path", properties.getProperty("worldcup-path", "hdfs://127.0.0.1:8020/user/djuri/worldcup"));
 		hdfsConf.put("hdfsConf", properties.getProperty("hdfs-xml-config", "/etc/hadoop/conf/core-site.xml"));
 		
 		builder.setSpout("tweets", new TweetsHdfsSpout(hdfsConf));        
-//		builder.setBolt("tweets", new TweetJsonToTextBolt())
-//			.shuffleGrouping("tweetsText"); 
 	
 		builder.setBolt("normalizedTweets", new NormalizerBolt())
 			.shuffleGrouping("tweets"); 
@@ -129,7 +116,7 @@ public class RefereeSentiment extends AbstractTopologyRunner {
 			
 			
 			FileNameFormat fileNameFormat = new DefaultFileNameFormat()
-				.withPath(String.format("/user/djuri/s1017497-referee-sentiment-real-%s/", lang));
+				.withPath(String.format("/user/djuri/s1017497-referee-sentiment-real-2-%s/", lang));
 			
 			HdfsBolt hdfsBolt = new HdfsBolt()
 		        .withFsUrl("hdfs://studyserver2:8020")
@@ -150,6 +137,6 @@ public class RefereeSentiment extends AbstractTopologyRunner {
 	
     
     public static void main(String[] args) {
-    	new RefereeSentiment().run(args);;
+    	new RefereeSentimentDnet().run(args);;
     }
 }
