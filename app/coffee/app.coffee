@@ -10,6 +10,9 @@
 angular.module("mbd", [
     "mbd.sideBarCtrl"
     "mbd.matchCtrl"
+    "mbd.testCtrl"
+    "ngSanitize"
+    "btford.markdown"
     "ui.router"
 ]).config [
     "$stateProvider",
@@ -23,13 +26,20 @@ angular.module("mbd", [
         $stateProvider
             .state('index', {
                url: "/",
-               templateUrl: "/public/partials/index.html"
+               templateUrl: "/partials/index.html"
         })
 
         $stateProvider
             .state('match', {
                 url: "/match/:index",
-                templateUrl: "/public/partials/match.html"
+                templateUrl: "/partials/match.html"
                 controller: "MatchCtrl"
+        })
+
+        $stateProvider
+            .state('test', {
+                url: "/test",
+                templateUrl: "/partials/test.html"
+                controller: "TestCtrl"
         })
 ]

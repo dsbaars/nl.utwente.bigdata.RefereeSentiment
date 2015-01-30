@@ -1,5 +1,5 @@
 <h3 class="no-padding">{{ match.home_team.country }} - {{ match.away_team.country }} <small>{{ match.home_team.goals }} - {{ match.away_team.goals }}</small></h3>
-<h4>{{ match.datetime | date:'medium'}}</h4>
+<h4>{{ match.datetime | date:'medium'}}
 <div class="row">
     <div class="col-md-3">
         <h4>{{ match.home_team.country }}</h4>
@@ -12,13 +12,9 @@
         </ul>
     </div>
     <div class="col-md-9">
-        <h4>Negative tweets vs. Match time</h4>
-        <div class="alert alert-danger" role="alert" ng-show="error">
-            {{ error }}
-        </div>
         <div id="matchChart"></div>
-        <div class="alert alert-info" role="alert">
-            Only English-tweets are processed because of time constraints, therefore this graph probably is not representative.
+        <div class="alert alert-warning" role="alert">
+            Currently, all matches show sentiment graph of Brazil - Netherlands.
         </div>
     </div>
 </div>

@@ -6,7 +6,9 @@ angular.module("mbd.matchCtrl", ['chart.js']).controller('MatchCtrl', [
         $scope.matches = []
         $scope.events = []
         $scope.lines = []
-        $http.get('/public/data/worldcup-matches.json').success((data, status) ->
+        $scope.error = null
+
+        $http.get('/data/worldcup-matches.json').success((data, status) ->
             $scope.matches = data
             $scope.match = data[$stateParams.index]
             $scope.home_events = data[$stateParams.index].home_team_events
@@ -22,128 +24,77 @@ angular.module("mbd.matchCtrl", ['chart.js']).controller('MatchCtrl', [
                 return
             )
 
-            jsonData = [
-                18,
-                24,
-                96,
-                824,
-                840,
-                792,
-                424,
-                128,
-                552,
-                595,
-                357,
-                392,
-                224,
-                112,
-                189,
-                56,
-                70,
-                0,
-                119,
-                84,
-                91,
-                105,
-                98,
-                21,
-                91,
-                0,
-                0,
-                0,
-                35,
-                112,
-                222,
-                24,
-                0,
-                24,
-                0,
-                40,
-                160,
-                96,
-                184,
-                168,
-                196,
-                63,
-                21,
-                42,
-                70,
-                105,
-                28,
-                70,
-                21,
-                119,
-                49,
-                70,
-                14,
-                42,
-                0,
-                56,
-                161,
-                7,
-                63,
-                28,
-                21,
-                133,
-                7,
-                0,
-                0,
-                0,
-                0,
-                0,
-                12,
-                108,
-                72,
-                42,
-                12,
-                24,
-                6,
-                36,
-                110,
-                30,
-                30,
-                0,
-                85,
-                175,
-                35,
-                150,
-                105,
-                85,
-                230,
-                1105,
-                1809,
-                1048,
-                676,
-                424,
-                396,
-                412,
-                248
-                ]
+            $http.get('/data/' + $scope.match.home_team.country + '-' + $scope.match.away_team.country + '.json')
+                .success((data, status) ->
+                    sentimentComb = []
+                    firstDate = null
+                    minute = null
+                    angular.forEach(data, (val,key) ->
+                        # We make sure the response is ordered by time
+                        thisDate = moment(val[1], "YYYY-MM-DD HH:mm:ss Z")
 
-            c3.generate(
-                tooltip:
-                    show: false
-                point:
-                    show: false
-                bindto: "#matchChart"
-                legend:
-                    show: false
-                data:
-                    type: 'spline'
-                    x: "x"
-                    json:
-                        x: $scope.labels
-                        sentiment: jsonData
-                axis:
-                    x:
-                        tick:
-                            values: $scope.ticks
-                grid:
-                    x:
-                        lines: $scope.lines
+                        if firstDate is null
+                            firstDate = thisDate.clone()
+                            minute = 0
+                        else
+                            minute = thisDate.diff(firstDate, 'minutes')
+
+                        if val[4] <= 0
+                            combination = {
+                                minute: minute
+                                date: moment().format(val[1]),
+                                sentiment:  val[4]
+                            }
+                            sentimentComb.push(combination)
+                        return
+                        )
+
+                    sentimentCalc = _.transform(sentimentComb, (res, n, key) ->
+                        if res[n.minute]
+                            res[n.minute] = res[n.minute] + Math.abs(n.sentiment)
+                        else
+                            res[n.minute] = Math.abs(n.sentiment)
+                        return
+                    )
+
+                    graphData = _.map($scope.labels, (v) ->
+                        if sentimentCalc[v]
+                            return sentimentCalc[v]
+                        0
+                        )
+
+                    #console.log(graphData)
+
+                    c3.generate(
+                        tooltip:
+                            show: false
+                        point:
+                            show: false
+                        bindto: "#matchChart"
+                        legend:
+                            show: false
+                        data:
+                            type: 'spline'
+                            x: "x"
+                            json:
+                                x: $scope.labels
+                                sentiment: graphData
+                        axis:
+                            x:
+                                tick:
+                                    values: $scope.ticks
+                        grid:
+                            x:
+                                lines: $scope.lines
+                    )
+
+                    return
+            ).error( ->
+                #console.log('error')
+                $scope.error = "Error: Sentiment data not found"
             )
-            return
-            )
+        )
+
 
         $scope.labels = _.range([start = 0], 99, [step = 1])
         $scope.ticks = _.range([start = 0], 99, [step = 5])
