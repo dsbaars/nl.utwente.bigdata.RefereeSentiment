@@ -11,6 +11,8 @@ angular.module("mbd", [
     "mbd.sideBarCtrl"
     "mbd.matchCtrl"
     "mbd.testCtrl"
+    "ngSanitize"
+    "btford.markdown"
     "ui.router"
 ]).config [
     "$stateProvider",

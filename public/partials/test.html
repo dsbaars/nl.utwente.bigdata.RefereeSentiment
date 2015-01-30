@@ -1,0 +1,20 @@
+<h3 class="no-padding">{{ match.home_team.country }} - {{ match.away_team.country }} <small>{{ match.home_team.goals }} - {{ match.away_team.goals }}</small></h3>
+<h4>{{ match.datetime | date:'medium'}}
+<div class="row">
+    <div class="col-md-3">
+        <h4>{{ match.home_team.country }}</h4>
+        <ul>
+            <li ng-repeat="e in home_events">{{ e.time }}: {{ e.type_of_event }} by {{ e.player }}</li>
+        </ul>
+        <h4>{{ match.away_team.country }}</h4>
+        <ul>
+            <li ng-repeat="e in away_events">{{ e.time }}: {{ e.type_of_event }} by {{ e.player }}</li>
+        </ul>
+    </div>
+    <div class="col-md-9">
+        <div id="matchChart"></div>
+        <div class="alert alert-warning" role="alert">
+            Currently, all matches show sentiment graph of Brazil - Netherlands.
+        </div>
+    </div>
+</div>
