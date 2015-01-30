@@ -12,7 +12,7 @@ import backtype.storm.generated.InvalidTopologyException;
 import backtype.storm.generated.StormTopology;
 
 public abstract class AbstractTopologyRunnerLocal {
-	public static final Logger logger = Logger.getLogger(AbstractTopologyRunner.class);  
+	public static final Logger logger = Logger.getLogger(AbstractTopologyRunnerLocal.class);  
 	
 	// sub-classes have to override this function
 	protected abstract StormTopology buildTopology(Properties properties);
