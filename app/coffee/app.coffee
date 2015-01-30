@@ -26,20 +26,13 @@ angular.module("mbd", [
         $stateProvider
             .state('index', {
                url: "/",
-               templateUrl: "/partials/index.html"
+               templateUrl: "/public/partials/index.html"
         })
 
         $stateProvider
             .state('match', {
                 url: "/match/:index",
-                templateUrl: "/partials/match.html"
+                templateUrl: "/public/partials/match.html"
                 controller: "MatchCtrl"
-        })
-
-        $stateProvider
-            .state('test', {
-                url: "/test",
-                templateUrl: "/partials/test.html"
-                controller: "TestCtrl"
         })
 ]

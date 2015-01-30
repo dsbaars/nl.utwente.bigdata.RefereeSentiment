@@ -4,17 +4,12 @@ angular.module("mbd", ["mbd.sideBarCtrl", "mbd.matchCtrl", "mbd.testCtrl", "ngSa
     $urlRouterProvider.otherwise("/");
     $stateProvider.state('index', {
       url: "/",
-      templateUrl: "/partials/index.html"
+      templateUrl: "/public/partials/index.html"
     });
-    $stateProvider.state('match', {
+    return $stateProvider.state('match', {
       url: "/match/:index",
-      templateUrl: "/partials/match.html",
+      templateUrl: "/public/partials/match.html",
       controller: "MatchCtrl"
-    });
-    return $stateProvider.state('test', {
-      url: "/test",
-      templateUrl: "/partials/test.html",
-      controller: "TestCtrl"
     });
   }
 ]);

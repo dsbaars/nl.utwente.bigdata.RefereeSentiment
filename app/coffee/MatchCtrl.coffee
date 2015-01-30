@@ -8,7 +8,7 @@ angular.module("mbd.matchCtrl", ['chart.js']).controller('MatchCtrl', [
         $scope.lines = []
         $scope.error = null
 
-        $http.get('/data/worldcup-matches.json').success((data, status) ->
+        $http.get('/public/data/worldcup-matches.json').success((data, status) ->
             $scope.matches = data
             $scope.match = data[$stateParams.index]
             $scope.home_events = data[$stateParams.index].home_team_events
@@ -24,7 +24,7 @@ angular.module("mbd.matchCtrl", ['chart.js']).controller('MatchCtrl', [
                 return
             )
 
-            $http.get('/data/' + $scope.match.home_team.country + '-' + $scope.match.away_team.country + '.json')
+            $http.get('/public/data/' + $scope.match.home_team.country + '-' + $scope.match.away_team.country + '.json')
                 .success((data, status) ->
                     sentimentComb = []
                     firstDate = null

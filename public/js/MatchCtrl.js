@@ -5,7 +5,7 @@ angular.module("mbd.matchCtrl", ['chart.js']).controller('MatchCtrl', [
     $scope.events = [];
     $scope.lines = [];
     $scope.error = null;
-    $http.get('/data/worldcup-matches.json').success(function(data, status) {
+    $http.get('/public/data/worldcup-matches.json').success(function(data, status) {
       $scope.matches = data;
       $scope.match = data[$stateParams.index];
       $scope.home_events = data[$stateParams.index].home_team_events;
@@ -24,7 +24,7 @@ angular.module("mbd.matchCtrl", ['chart.js']).controller('MatchCtrl', [
           "class": 'away'
         });
       });
-      return $http.get('/data/' + $scope.match.home_team.country + '-' + $scope.match.away_team.country + '.json').success(function(data, status) {
+      return $http.get('/public/data/' + $scope.match.home_team.country + '-' + $scope.match.away_team.country + '.json').success(function(data, status) {
         var firstDate, graphData, minute, sentimentCalc, sentimentComb;
         sentimentComb = [];
         firstDate = null;
