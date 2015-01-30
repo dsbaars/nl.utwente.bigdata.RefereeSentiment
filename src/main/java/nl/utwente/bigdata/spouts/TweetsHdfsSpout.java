@@ -104,8 +104,7 @@ public class TweetsHdfsSpout extends BaseRichSpout {
 	        					line = br.readLine();
 	        				}
 
-	        				br.close();
-	        				isr.close();
+	        		
 	        			}
 	            	} catch (Exception e1) {
 	        			// TODO Auto-generated catch block
